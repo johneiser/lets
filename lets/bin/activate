@@ -1,0 +1,63 @@
+# This file must be used with "source bin/activate" *from bash*
+# you cannot run it directly
+
+# Usage:
+# source lets/bin/activate
+
+if [[ ${LETS_DIR+x} ]]
+then
+    echo "[x] Already in lets environment"
+    lexit
+fi
+
+lexit()
+{
+    # Remove shell identifier
+    if ! [ -z "${_LETS_OLD_PS1+_}" ] ; then
+        PS1="$_LETS_OLD_PS1"
+        export PS1
+        unset _LETS_OLD_PS1
+    fi
+
+    # Remove auto-complete features
+    if ! [ -z "${LETS_MODULES_PATH+_}" ] ; then
+        complete -r lets
+        unset -f lets
+        unset -f _lets
+        unset MODULES_PATH
+        unset LETS_DIR
+        unset -f lexit
+    fi
+}
+
+# Set base directory
+LETS_DIR=$(dirname "${BASH_SOURCE[0]}")
+LETS_DIR=$(cd "$LETS_DIR/../..">/dev/null && pwd)
+export LETS_DIR
+
+# Add shell identifier
+_LETS_OLD_PS1="${PS1-}"
+PS1="\[\033[33m\](lets)\[\033[00m\] ${PS1-}"
+export PS1
+
+# Add auto-complete features
+LETS_MODULES_PATH="$LETS_DIR/lets/modules"
+_lets()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts='$(find "$LETS_MODULES_PATH" -type f -name "*.py" | sed -e "s|^$LETS_MODULES_PATH/*||" -e "s|.py$||")'
+    if [[ ${prev} == "lets" ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -o default -F _lets lets
+
+lets()
+{
+    "$LETS_DIR/lets.py" "$@"
+}
+
