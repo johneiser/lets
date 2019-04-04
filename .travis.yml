@@ -1,0 +1,9 @@
+language: python
+
+services:
+  - docker
+
+before_install:
+
+script:
+  - python3 test.py
