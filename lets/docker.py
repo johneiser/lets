@@ -53,6 +53,8 @@ class DockerModule(Module):
                     self.throw(e)
                 except docker.errors.APIError as e:
                     self.throw(e)
+                except TypeError as e:
+                    pass
 
             if image is None:
                 # Check if image can be pulled remotely
