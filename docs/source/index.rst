@@ -23,12 +23,11 @@ Let's take a deeper look with :doc:`usage`, or get started with :doc:`install`.
    usage
    development
    modules
+
+.. toctree::
+   :maxdepth: 1
+
    changelog
-
-
-========
-Appendix
-========
 
 * :ref:`genindex`
 * :ref:`search`

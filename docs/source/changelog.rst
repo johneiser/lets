@@ -1,8 +1,9 @@
 
-
+Changelog
+=========
 
 0.0.2
-=====
+^^^^^
 
 - Slightly increased verbosity of README.md
 - Increased version accuracy in documentation
@@ -13,6 +14,6 @@
 
 
 0.0.1
-=====
+^^^^^
 
 - Initial upload

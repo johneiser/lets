@@ -40,7 +40,7 @@ Modules
 
    usage: messagebox [-h] [-v] [-q] [-t TITLE] [-m MESSAGE]
                   [-i {NO,ERROR,INFORMATION,WARNING,QUESTION}]
-                  [-e {seh,thread,process,none}]
+                  [-e {thread,process}]
 
 
 .. autoclass:: lets.modules.generate.payload.windows.x86.messagebox.Messagebox
@@ -51,5 +51,5 @@ Modules
 
    usage: messagebox [-h] [-v] [-q] [-t TITLE] [-m MESSAGE]
                   [-i {NO,ERROR,INFORMATION,WARNING,QUESTION}]
-                  [-e {seh,thread,process,none}]
+                  [-e {none,seh,thread,process}]
 
