@@ -184,6 +184,29 @@ class Module(unittest.TestCase, Logger):
         """
         return vars(self.usage().parse_args(args))
 
+    def defaults(self) -> dict:
+        """
+        Discover the default values of all arguments specified in the
+        usage argument parser.
+
+        :return: Dict of options
+        """
+        defaults = {}
+        parser = self.usage()
+
+        for action in parser._actions:
+            if not "SUPPRESS" in action.dest:
+                try:
+                    if not "SUPPRESS" in action.default:
+                        defaults[action.dest] = action.default
+                except TypeError:
+                    defaults[action.dest] = action.default
+
+        for dest, default in parser._defaults.items():
+            defaults[dest] = default
+
+        return defaults
+
     def do(self, data:bytes, options:dict=None) -> bytes:
         """
         Main functionality of a module.  Update self.options with
@@ -193,8 +216,10 @@ class Module(unittest.TestCase, Logger):
         :param options: Dict of options to be used by module
         :return: Generator containing results of module execution, in bytes
         """
+        # Update self.options with defaults
+        self.options.update(self.defaults())
 
-        # Update self.options with options
+        # Update self.options with configured options
         if options:
             self.options.update(options)
 

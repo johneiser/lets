@@ -13,11 +13,6 @@ class MyDockerModule(DockerModule):
     [Author and credits]
     """
 
-    # Defaults for configurable options
-    options = {
-
-    }
-
     # A list of docker images required by the module.
     images = [
         "ubuntu:latest"
@@ -108,9 +103,11 @@ class MyDockerModule(DockerModule):
         # Test generic
         self.assertEqual(
             b"".join(self.do(b"abcd", {"upper" : False})),
-            b"YWJjZA==")
+            b"YWJjZA==",
+            "Defaults produced inaccurate results")
 
         # Test with uppercase conversion
         self.assertEqual(
             b"".join(self.do(b"abcd", {"upper" : True})),
-            b"QUJDRA==")
+            b"QUJDRA==",
+            "Uppercase produced inaccurate results")

@@ -25,10 +25,11 @@ if __name__ == "__main__":
             # Execute module
             gen = mod.do(data, mod.parse(args.options))
 
-            # Print results
-            for i in gen:
-                sys.stdout.buffer.write(i)
-                sys.stdout.buffer.flush()
+            if gen:
+                # Print results
+                for i in gen:
+                    sys.stdout.buffer.write(i)
+                    sys.stdout.buffer.flush()
 
         else:
             raise(Module.Exception("Error loading module: %s" % args.module))

@@ -23,7 +23,7 @@ It is highly recommended to use a `python virtual environment <https://docs.pyth
    $ virtualenv -p python3 venv
    $ source venv/bin/activate
    (venv) $ python --version
-   Python 3.7.1
+   Python 3.6.3
    (venv) $ pip install --upgrade pip
 
 

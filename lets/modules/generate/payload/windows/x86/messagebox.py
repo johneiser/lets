@@ -7,14 +7,8 @@ class Messagebox(DockerModule):
     """
     Generate Windows x86 shellcode that spawns a message box.
     """
-
-    # Defaults for configurable options
-    options = {
-        "title" : "MessageBox",
-        "message" : "Hello, from MSF!",
-        "icon" : "NO",
-        "exitfunc" : "process"
-    }
+    ICONS = ["NO", "ERROR", "INFORMATION", "WARNING", "QUESTION"]
+    EXITFUNCS = ["none", "seh", "thread", "process"]
 
     # A list of docker images required by the module.
     images = [
@@ -32,22 +26,22 @@ class Messagebox(DockerModule):
         parser.add_argument("-t", "--title",
             help="title of window",
             type=str,
-            default=self.options.get("title"))
+            default="MessageBox")
         parser.add_argument("-m", "--message",
             help="message to display",
             type=str,
-            default=self.options.get("message"))
+            default="Hello, from MSF!")
         parser.add_argument("-i", "--icon",
             help="icon to use",
             type=str,
-            choices=["NO", "ERROR", "INFORMATION", "WARNING", "QUESTION"],
-            default=self.options.get("icon"))
+            choices=self.ICONS,
+            default="NO")
 
         parser.add_argument("-e", "--exitfunc",
             help="exitfunc",
             type=str,
-            choices=["seh", "thread", "process", "none"],
-            default=self.options.get("exitfunc"))
+            choices=self.EXITFUNCS,
+            default="process")
 
         return parser
 
@@ -93,6 +87,21 @@ class Messagebox(DockerModule):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Test generic
+        # Test defaults
         sc = b"".join(self.do(b""))
-        self.assertGreater(len(sc), 0)
+        self.assertGreater(len(sc),
+            0,
+            "Defaults produced no results")
+
+        # Test icons
+        for icon in self.ICONS:
+            self.assertGreater(
+                len(b"".join(self.do(b"", {"icon" : icon}))),
+                0,
+                "Icon (%s) produced no results" % icon)
+
+        # Test exitfuncs
+        for exitfunc in self.EXITFUNCS:
+            self.assertGreater(len(b"".join(self.do(b"", {"exitfunc" : exitfunc}))),
+                0,
+                "Exitfunc (%s) produced no results" % exitfunc)

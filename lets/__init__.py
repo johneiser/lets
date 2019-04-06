@@ -1,3 +1,4 @@
+from lets import module
 
 def do(path:str, data:bytes, options:dict=None) -> bytes:
     """
@@ -9,7 +10,9 @@ def do(path:str, data:bytes, options:dict=None) -> bytes:
     :param options: Dict of options to be used by module
     :return: Results of module execution, in bytes
     """
-    mod = Module.build(path)
+    mod = module.Module.build(path)
     if mod:
-        return b"".join(mod.do(data, options))
+        gen = mod.do(data, options)
+        if gen:
+            return b"".join(gen)
     return b""

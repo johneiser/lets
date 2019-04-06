@@ -13,11 +13,6 @@ class MyModule(Module):
     [Author and credits]
     """
 
-    # Defaults for configurable options
-    options = {
-
-    }
-
     def usage(self) -> object:
         """
         Configure an ArgumentParser object with options relevant to the module.
@@ -46,22 +41,22 @@ class MyModule(Module):
         """
         super().do(data, options)
         
-        # Validate input
-        try:
-            assert data, "Expecting data"
-        except AssertionError as e:
-            self.throw(e)
+        # # Validate input
+        # try:
+        #     assert data, "Expecting data"
+        # except AssertionError as e:
+        #     self.throw(e)
 
-        # Convert, if necessary
-        if self.options.get("upper"):
-            try:
-                self.info("Converting to uppercase")
-                data = data.decode().upper().encode()
-            except UnicodeDecodeError as e:
-                self.throw(e)
+        # # Convert, if necessary
+        # if self.options.get("upper"):
+        #     try:
+        #         self.info("Converting to uppercase")
+        #         data = data.decode().upper().encode()
+        #     except UnicodeDecodeError as e:
+        #         self.throw(e)
 
-        # Encode
-        yield base64.b64encode(data)
+        # # Encode
+        # yield base64.b64encode(data)
 
     def test(self):
         """
@@ -70,9 +65,11 @@ class MyModule(Module):
         # Test generic
         self.assertEqual(
             b"".join(self.do(b"abcd", {"upper" : False})),
-            b"YWJjZA==")
+            b"YWJjZA==",
+            "Defaults produced inaccurate results")
 
         # Test with uppercase conversion
         self.assertEqual(
             b"".join(self.do(b"abcd", {"upper" : True})),
-            b"QUJDRA==")
+            b"QUJDRA==",
+            "Uppercase produced inaccurate results")
