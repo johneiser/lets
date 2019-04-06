@@ -41,22 +41,22 @@ class MyModule(Module):
         """
         super().do(data, options)
         
-        # # Validate input
-        # try:
-        #     assert data, "Expecting data"
-        # except AssertionError as e:
-        #     self.throw(e)
+        # Validate input
+        try:
+            assert data, "Expecting data"
+        except AssertionError as e:
+            self.throw(e)
 
-        # # Convert, if necessary
-        # if self.options.get("upper"):
-        #     try:
-        #         self.info("Converting to uppercase")
-        #         data = data.decode().upper().encode()
-        #     except UnicodeDecodeError as e:
-        #         self.throw(e)
+        # Convert, if necessary
+        if self.options.get("upper"):
+            try:
+                self.info("Converting to uppercase")
+                data = data.decode().upper().encode()
+            except UnicodeDecodeError as e:
+                self.throw(e)
 
-        # # Encode
-        # yield base64.b64encode(data)
+        # Encode
+        yield base64.b64encode(data)
 
     def test(self):
         """

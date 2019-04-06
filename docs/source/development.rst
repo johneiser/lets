@@ -59,7 +59,7 @@ Example
 
 Here is an example module illustrating these concepts:
 
-.. literalinclude:: ../../lets/modules/template/mymodule.py
+.. literalinclude:: ../../lets/modules/sample/mymodule.py
    :language: python
 
 
@@ -83,7 +83,7 @@ Example
 
 Here is an example docker module illustrating these concepts:
 
-.. literalinclude:: ../../lets/modules/template/mydockermodule.py
+.. literalinclude:: ../../lets/modules/sample/mydockermodule.py
    :language: python
 
 

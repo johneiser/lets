@@ -94,8 +94,6 @@ class MyDockerModule(DockerModule):
                     container.wait()
                     yield base64.b64encode(outfile.read())
 
-        return iter(())
-
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
