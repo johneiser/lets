@@ -160,7 +160,7 @@ class DockerModule(Module):
 
         return parser
     
-    def do(self, data:bytes, options:dict=None) -> bytes:
+    def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.  Make sure any required docker containers
         are created, updated, and available.

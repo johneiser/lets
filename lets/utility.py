@@ -13,4 +13,4 @@ class Utility(object):
 
         :return: Absolute path of core directory
         """
-        return os.path.dirname(__file__)
+        return os.path.abspath(os.path.dirname(__file__))

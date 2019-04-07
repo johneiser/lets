@@ -8,7 +8,7 @@ Requirements
 
 - Linux (tested with Ubuntu 14.04)
 - `Docker <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_ (tested with 17.09.0-ce)
-- Python3 (tested with Python v3.6.3)
+- Python3 (tested with Python 3.6.3)
 
 ===================
 Virtual Environment

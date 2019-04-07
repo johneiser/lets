@@ -23,6 +23,7 @@ class Messagebox(DockerModule):
         """
         parser = super().usage()
 
+        # Messagebox specific
         parser.add_argument("-t", "--title",
             help="title of window",
             type=str,
@@ -37,15 +38,22 @@ class Messagebox(DockerModule):
             choices=self.ICONS,
             default="NO")
 
-        parser.add_argument("-e", "--exitfunc",
+        # Msfvenom specific
+        parser.add_argument("--exitfunc",
             help="exitfunc",
             type=str,
             choices=self.EXITFUNCS,
             default="process")
+        parser.add_argument("-b", "--badchars",
+            help="characters to avoid",
+            type=str)
+        parser.add_argument("-e", "--encode",
+            help="encoding to avoid characters",
+            type=str)
 
         return parser
 
-    def do(self, data:bytes, options:dict=None) -> bytes:
+    def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
@@ -59,19 +67,38 @@ class Messagebox(DockerModule):
         """
         super().do(data, options)
 
+        # Build core msfvenom command
+        cmd = "msfvenom -a x64 --platform windows -p windows/x64/messagebox -f raw -o /data/out"
+
+        # Adjust command with options
+        try:
+            encode = self.options.get("encode")
+            if encode:
+                cmd += " -e %(encode)s" % self.options
+
+            badchars = self.options.get("badchars")
+            if badchars:
+                cmd += " -b %(badchars)s" % self.options
+
+            cmd += " EXITFUNC=%(exitfunc)s TITLE='%(title)s' TEXT='%(message)s' ICON=%(icon)s" % self.options
+
+        except KeyError as e:
+            self.throw(e)
+
         # Prepare output file
         with tempfile.NamedTemporaryFile(dir="/tmp") as outfile:
 
             # Prepare container with output file mounted as volume
             with self.Container(
                 image="tools/metasploit:latest",
+                network_disabled=True,
                 volumes={
                     outfile.name : {
                         "bind" : "/data/out",
                         "mode" : "rw"
                     }
                 },
-                command="msfvenom -a x64 --platform windows -p windows/x64/messagebox -f raw -o /data/out EXITFUNC=%(exitfunc)s TITLE='%(title)s' TEXT='%(message)s' ICON=%(icon)s" % self.options) as container:
+                command=cmd) as container:
 
                 # Handle container stdout and stderr
                 for line in container.logs(stdout=True, stderr=True):
@@ -80,8 +107,6 @@ class Messagebox(DockerModule):
                 # Handle data written to output file
                 container.wait()
                 yield outfile.read()
-
-        return iter(())
 
     def test(self):
         """

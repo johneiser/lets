@@ -207,7 +207,7 @@ class Module(unittest.TestCase, Logger):
 
         return defaults
 
-    def do(self, data:bytes, options:dict=None) -> bytes:
+    def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality of a module.  Update self.options with
         defaults and options, execute functionality, and return results.
@@ -233,7 +233,7 @@ class Module(unittest.TestCase, Logger):
             HANDLER.setLevel(logging.ERROR)
             LOGGER.setLevel(logging.ERROR)
             
-        self.info("Running module with %d bytes and options: %s" % (len(data), pprint.pformat(self.options)))
+        self.info("Running module with %d bytes and options: %s" % (len(data if data else b""), pprint.pformat(self.options)))
 
         return iter(())
 

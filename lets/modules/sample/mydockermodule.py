@@ -34,7 +34,7 @@ class MyDockerModule(DockerModule):
 
         return parser
 
-    def do(self, data:bytes, options:dict=None) -> bytes:
+    def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 

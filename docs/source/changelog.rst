@@ -2,8 +2,22 @@
 Changelog
 =========
 
+0.0.3
+^^^^^
+
+April 07, 2019
+
+- Enabled generator output for python interface
+- Fixed utility absolute path calculation
+- Added unit tests for bash and python interfaces
+- Added modules: encode/hex, decode/hex
+- Improved options available to existing msfvenom-based modules
+- Added ability to handle null data value (for python interface)
+
 0.0.2
 ^^^^^
+
+April 06, 2019
 
 - Slightly increased verbosity of README.md
 - Increased version accuracy in documentation
@@ -15,5 +29,7 @@ Changelog
 
 0.0.1
 ^^^^^
+
+April 04, 2019
 
 - Initial upload
