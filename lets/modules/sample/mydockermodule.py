@@ -1,9 +1,10 @@
-from lets.docker import DockerModule
+from lets.module import Module
+from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import os, base64, tempfile
+import os, base64
 
-class MyDockerModule(DockerModule):
+class MyDockerModule(DockerExtension, Module):
     """
     [Description of what type of data this module expects, what configuration options
     it accepts, what type of execution it performs, and what data it produces, if any].
@@ -40,14 +41,14 @@ class MyDockerModule(DockerModule):
 
         Module.do updates self.options with options.
 
-        DockerModule.do prepares required docker images.
+        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
         :return: Generator containing results of module execution, in bytes
         """
         super().do(data, options)
-        
+
         # Validate input
         try:
             assert data, "Expecting data"
@@ -62,37 +63,27 @@ class MyDockerModule(DockerModule):
             except UnicodeDecodeError as e:
                 self.throw(e)
 
-        # Prepare input file
-        with tempfile.NamedTemporaryFile(dir="/tmp") as infile:
-            infile.write(data)
-            infile.seek(0)
+        # Build command
+        cmd = "cp /data/in /data/out"
 
-            # Prepare output file
-            with tempfile.NamedTemporaryFile(dir="/tmp") as outfile:
+        # Prepare input and output files
+        with self.IO(data, infile="/data/in", outfile="/data/out") as io:
 
-                # Prepare container with input file and output file
-                # mounted as volumes
-                with self.Container(
-                    image="ubuntu:latest",
-                    volumes={
-                        infile.name : {
-                            "bind" : "/data/in",
-                            "mode" : "ro"
-                        },
-                        outfile.name : {
-                            "bind" : "/data/out",
-                            "mode" : "rw"
-                        }
-                    },
-                    command="cp /data/in /data/out") as container:
+            # Prepare container with input file and output file
+            # mounted as volumes
+            with self.Container(
+                image="ubuntu:latest",
+                network_disabled=True,
+                volumes=io.volumes,
+                command=cmd) as container:
 
-                    # Handle container stdout and stderr
-                    for line in container.logs(stdout=True, stderr=True):
-                        self.info(line.strip().decode(), decorate=False)
+                # Handle container stdout and stderr
+                for line in container.logs(stdout=True, stderr=True):
+                    self.info(line.strip().decode(), decorate=False)
 
-                    # Handle data written to output file
-                    container.wait()
-                    yield base64.b64encode(outfile.read())
+                # Handle data written to output file
+                container.wait()
+                yield base64.b64encode(io.outfile.read())
 
     def test(self):
         """

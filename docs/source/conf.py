@@ -10,44 +10,76 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os, sys, pprint
+import os, sys, pprint, pkgutil
 sys.path.insert(0, os.path.abspath('../..'))
 sys.dont_write_bytecode = True
 
-# Generate modules.rst
+# -- Generate modules --------------------------------------------------------
+
 from lets.module import Module
-from lets.docker import DockerModule
-with open(os.path.sep.join([os.path.dirname(__file__), "modules.rst"]), "w") as f:
+from lets.extensions.docker import DockerExtension
+
+def generate_modules():
 
     # Header
-    f.write("""
+    yield """
 Modules
 =======
-""")
+"""
 
     for label in Module.identify_all():
         mod = Module.instantiate(label)
         if mod:
 
             # Description
-            f.write("""
+            yield """
 .. autoclass:: %s.%s
-""" % (label, mod.__class__.__name__))
+""" % (label, mod.__class__.__name__)
 
             # Docker-Specific
-            if isinstance(mod, DockerModule):
+            if isinstance(mod, DockerExtension):
 
-                f.write("""
+                yield """
    Docker images: %s
-""" % (pprint.pformat(mod.images)))
+""" % (pprint.pformat(mod.images))
 
             # Usage
-            f.write("""
+            yield """
 .. code-block:: bash
 
    %s
-""" % mod.usage().format_usage())
+""" % mod.usage().format_usage()
 
+# Generate modules.rst
+with open(os.path.sep.join([os.path.dirname(__file__), "modules.rst"]), "w") as f:
+    for line in generate_modules():
+        f.write(line)
+
+# -- Generate extensions -----------------------------------------------------
+
+import lets.extensions
+
+def generate_extensions():
+
+    # Header
+    yield """
+Extensions
+==========
+"""
+
+    for importer, modname, ispkg in pkgutil.iter_modules(lets.extensions.__path__):
+        if not ispkg:
+
+            # Description
+            yield """
+.. automodule:: %s.%s
+   :members:
+""" % (lets.extensions.__package__, modname)
+
+# Generate extensions.rst
+with open(os.path.sep.join([os.path.dirname(__file__), "extensions.rst"]), "w") as f:
+    for line in generate_extensions():
+        f.write(line)
 
 # -- Project information -----------------------------------------------------
 
@@ -56,7 +88,7 @@ copyright = '2019, johneiser'
 author = 'johneiser'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.3'
+release = '0.1.1'
 
 
 # -- General configuration ---------------------------------------------------

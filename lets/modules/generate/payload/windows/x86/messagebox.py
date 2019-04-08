@@ -1,9 +1,10 @@
-from lets.docker import DockerModule
+from lets.module import Module
+from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import os, base64, tempfile
+import os, base64
 
-class Messagebox(DockerModule):
+class Messagebox(DockerExtension, Module):
     """
     Generate Windows x86 shellcode that spawns a message box.
     """
@@ -59,7 +60,7 @@ class Messagebox(DockerModule):
 
         Module.do updates self.options with options.
 
-        DockerModule.do prepares required docker images.
+        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
@@ -85,19 +86,14 @@ class Messagebox(DockerModule):
         except KeyError as e:
             self.throw(e)
 
-        # Prepare output file
-        with tempfile.NamedTemporaryFile(dir="/tmp") as outfile:
+        # Prepare input and output files
+        with self.IO() as io:
 
             # Prepare container with output file mounted as volume
             with self.Container(
                 image="tools/metasploit:latest",
                 network_disabled=True,
-                volumes={
-                    outfile.name : {
-                        "bind" : "/data/out",
-                        "mode" : "rw"
-                    }
-                },
+                volumes=io.volumes,
                 command=cmd) as container:
 
                 # Handle container stdout and stderr
@@ -106,7 +102,7 @@ class Messagebox(DockerModule):
 
                 # Handle data written to output file
                 container.wait()
-                yield outfile.read()
+                yield io.outfile.read()
 
     def test(self):
         """

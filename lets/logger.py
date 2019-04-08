@@ -1,6 +1,9 @@
 import logging
 
 class Logger(object):
+    """
+    Logging mixin class, enabling logging functionality across modules.
+    """
 
     class Exception(Exception):
         """

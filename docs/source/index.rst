@@ -22,6 +22,7 @@ Let's take a deeper look with :doc:`usage`, or get started with :doc:`install`.
    install
    usage
    development
+   extensions
    modules
 
 .. toctree::

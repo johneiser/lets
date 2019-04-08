@@ -2,6 +2,19 @@
 Changelog
 =========
 
+0.1.1
+^^^^^
+
+April 07, 2019
+
+- Refactored to consider docker (and other) module extensions as mixins
+- Adjusted existing docker modules to use DockerExtension
+- Added auto-generating extension documentation
+- Added IO context manager to DockerExtension
+- Added images: tools/keystone, tools/capstone
+- Added extensions: AssemblyExtension, DisassemblyExtension
+- Added modules: assemble/x86, assemble/x64, disassemble/x86, disassemble/x64
+
 0.0.3
 ^^^^^
 

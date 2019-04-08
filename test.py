@@ -23,7 +23,6 @@ class BashInterfaceTest(unittest.TestCase):
             "Base64 encoding produced inaccurate results")
 
 
-
 class PythonInterfaceTest(unittest.TestCase):
     """
     Test the python interface.  Relies on the following modules:

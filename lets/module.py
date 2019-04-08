@@ -11,20 +11,22 @@ HANDLER = logging.StreamHandler(sys.stderr)
 HANDLER.setLevel(logging.WARNING)
 LOGGER.addHandler(HANDLER)
 
-class Module(unittest.TestCase, Logger):
+class Module(Logger, unittest.TestCase):
     """
     Abstract module class, from which all modules inherit.  Provides
     various utilities for each module including identification,
     instantiation, and testing.
     """
     test_method="test"
-    options = {}
 
     def __init__(self):
         """
         Custom constructor to enable proper inheritance from unittest.TestCase.
         """
         super().__init__(self.test_method)
+
+        # Establish clean slate for module options
+        self.options = {}
 
     @classmethod
     def identify(cls, path:str) -> str:
@@ -168,10 +170,10 @@ class Module(unittest.TestCase, Logger):
             help="show extra information",
             action="store_true",
             default=False)
-        parser.add_argument("-q", "--quiet",
-            help="show minimal information",
-            action="store_true",
-            default=False)
+        # parser.add_argument("-q", "--quiet",
+        #     help="show minimal information",
+        #     action="store_true",
+        #     default=False)
 
         return parser
 
@@ -228,10 +230,10 @@ class Module(unittest.TestCase, Logger):
             HANDLER.setLevel(logging.INFO)
             LOGGER.setLevel(logging.INFO)
 
-        if self.options.get("quiet"):
-            # Adjust logging up to ERROR
-            HANDLER.setLevel(logging.ERROR)
-            LOGGER.setLevel(logging.ERROR)
+        # if self.options.get("quiet"):
+        #     # Adjust logging up to ERROR
+        #     HANDLER.setLevel(logging.ERROR)
+        #     LOGGER.setLevel(logging.ERROR)
             
         self.info("Running module with %d bytes and options: %s" % (len(data if data else b""), pprint.pformat(self.options)))
 
