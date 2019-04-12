@@ -17,11 +17,12 @@ if __name__ == "__main__":
         with open(args.infile, "rb") as fin:
             with open(args.outfile, "w") as fout:
                 for i in cs.disasm(fin.read(), 0):
-                    fout.write("0x{:<4}   {:<20}   {:<8} {:<12}\n".format(
-                            i.address,
-                            binascii.hexlify(i.bytes).decode(),
-                            i.mnemonic,
-                            i.op_str))
+                    # fout.write("0x{:<4}   {:<20}   {:<8} {:<12}\n".format(
+                    #         i.address,
+                    #         binascii.hexlify(i.bytes).decode(),
+                    #         i.mnemonic,
+                    #         i.op_str))
+                    fout.write("%s %s\n" % (i.mnemonic, i.op_str))
     except KeyError as e:
         raise(Exception("Architecture %s not supported" % str(e)))
     # except AttributeError as e:

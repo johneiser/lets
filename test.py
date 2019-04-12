@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, argparse, unittest, subprocess
+import os, sys, argparse, logging, unittest, subprocess
 import lets
 
 class BashInterfaceTest(unittest.TestCase):
@@ -57,22 +57,28 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     if args.module:
-        # Build module and add test
-        mod = lets.module.Module.build(args.module)
-        if mod:
-            suite.addTest(mod)
-        else:
-            raise(lets.module.Module.Exception("Error loading module: %s" % args.module))
+        try:
+            # Build module and add test
+            mod = lets.module.Module.build(args.module)
+            if mod and hasattr(mod, lets.module.Module.test_method):
+                suite.addTest(mod)
+            else:
+                raise(lets.module.Module.Exception("Error loading module: %s" % args.module))
+        except lets.module.Module.Exception as e:
+            logging.error("[!] %s" % (str(e)))
 
     else:
         # Add interface tests
         suite.addTest(BashInterfaceTest(lets.module.Module.test_method))
         suite.addTest(PythonInterfaceTest(lets.module.Module.test_method))
 
-        # Walk modules and add tests
-        for mod in lets.module.Module.build_all():
-            if mod and hasattr(mod, lets.module.Module.test_method):
-                suite.addTest(mod)
+        try:
+            # Walk modules and add tests
+            for mod in lets.module.Module.build_all():
+                if mod and hasattr(mod, lets.module.Module.test_method):
+                    suite.addTest(mod)
+        except lets.module.Module.Exception as e:
+            logging.error("[!] %s" % (str(e)))
 
     # Execute test suite
     runner = unittest.TextTestRunner()

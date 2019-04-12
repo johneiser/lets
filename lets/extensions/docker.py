@@ -1,4 +1,4 @@
-import os, sys, argparse, pprint, docker, logging, tempfile
+import os, sys, argparse, pprint, docker, logging, tempfile, subprocess
 
 from lets.extension import Extension
 from lets.logger import Logger
@@ -144,6 +144,17 @@ class DockerExtension(Extension, object):
             Wait for container to finish.
             """
             self.container.wait()
+
+        def interact(self):
+            """
+            Open a TTY to interact with the container.
+            """
+            proc = subprocess.Popen("docker attach %s" % self.container.name,
+                shell=True,
+                stdin=sys.stdin,
+                stdout=sys.stdout,
+                stderr=sys.stderr)
+            proc.communicate()
 
     def _prep(self):
         """

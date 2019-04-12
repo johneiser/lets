@@ -18,6 +18,9 @@ if __name__ == "__main__":
         if not sys.stdin.isatty():
             data = sys.stdin.buffer.read()
 
+        # Restore stdin to tty
+        sys.stdin = open("/dev/tty")
+
         # Build module
         mod = Module.build(args.module)
         if mod:

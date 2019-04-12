@@ -13,7 +13,7 @@ class AssemblyExtension(DockerExtension, object):
 
         :param code: Code to be assembled, as str
         :param arch: Architecture for which to assemble
-        :param mode: Mode with thich the architecture operates
+        :param mode: Mode with which the architecture operates
         :return: Assembled bytes
         """
 
@@ -63,7 +63,7 @@ class DisassemblyExtension(DockerExtension, object):
 
         :param code: Data to be disassembled, as bytes
         :param arch: Architecture for which to disassemble
-        :param mode: Mode with thich the architecture operates
+        :param mode: Mode with which the architecture operates
         :return: Disassembled code, as str
         """
 
