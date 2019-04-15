@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.1.4
+^^^^^
+
+April 15, 2019
+
+- Restore Sphinx (readthedocs failed)
+
 0.1.3
 ^^^^^
 
