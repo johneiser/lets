@@ -88,8 +88,8 @@ copyright = '2019, johneiser'
 author = 'johneiser'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.2'
-
+with open(os.path.sep.join([os.path.abspath('../..'), "VERSION"]), "r") as f:
+    release = f.read()
 
 # -- General configuration ---------------------------------------------------
 

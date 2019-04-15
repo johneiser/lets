@@ -15,13 +15,13 @@ In this manner, modules can be *chained* together, allowing completely unrelated
 
 To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/index.html).
 
-### Requirements
+## Requirements
 
 - Linux (tested with Ubuntu 14.04)
 - [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>) (tested with 17.09.0-ce)
 - Python3 (tested with Python 3.6.3)
 
-### Install
+## Install
 
 It is highly recommended that you use a [python virtual environment](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv) for this project; then use *pip* to install the requirements.
 
@@ -31,7 +31,7 @@ $ cd lets
 ~/lets $ pip install -r requirements.txt
 ```
 
-### Usage
+## Usage
 
 Refer to the [docs](https://lets.readthedocs.io/en/latest/usage.html)
 

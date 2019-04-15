@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.1.3
+^^^^^
+
+April 15, 2019
+
+- Enable FOSSA automated license and vulnerability management
+- Remove Sphinx from requirements
+
 0.1.2
 ^^^^^
 
@@ -9,8 +17,8 @@ April 12, 2019
 
 - Enabled interactive modules by restoring stdin to tty
 - Added modules: analyze/disassemble/x86, analyze/disassemble/x64
-- added images: tools/radare2
-- Changed image: tools/capstone (and thus modules: disassemble/*) to return only instructions, nothing else - leave the formatted disassembly to analyze/disassemble/*
+- Added images: tools/radare2
+- Changed image: tools/capstone (and thus modules: disassemble/) to return only instructions, nothing else - leave the formatted disassembly to analyze/disassemble/
 - Enabled test.py to handle errors gracefully
 
 0.1.1
