@@ -7,6 +7,7 @@ Changelog
 
 May 15, 2019
 
+- Fixed .travis.yml (update ubuntu dist for sqlite3 upgrade)
 - Fixed requirements.txt (django produced "pkg-resources==0.0.0")
 
 0.1.5
