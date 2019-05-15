@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.1.6
+^^^^^
+
+May 15, 2019
+
+- Fixed requirements.txt (django produced "pkg-resources==0.0.0")
+
 0.1.5
 ^^^^^
 
