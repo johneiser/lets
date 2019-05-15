@@ -17,7 +17,8 @@ class Module(Logger, unittest.TestCase):
     various utilities for each module including identification,
     instantiation, and testing.
     """
-    test_method="test"
+    test_method = "test"
+    interactive = False
 
     def __init__(self):
         """

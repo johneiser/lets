@@ -18,3 +18,10 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Apple
+.DS_Store
+._*
+
+# Databases
+db.sqlite3

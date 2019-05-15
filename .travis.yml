@@ -9,3 +9,4 @@ before_install:
 
 script:
   - python test.py
+  - python lets/api/manage.py test rest

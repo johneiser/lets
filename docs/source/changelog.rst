@@ -2,6 +2,17 @@
 Changelog
 =========
 
+0.1.5
+^^^^^
+
+May 14, 2019
+
+- Enabled input validation for various modules
+- Added [bool]interactive attribute to module
+- Added Django REST API with tests
+- Added licenses for included docker images
+- Added modules: listen/serve/smb
+
 0.1.4
 ^^^^^
 

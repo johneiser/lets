@@ -28,6 +28,12 @@ class X64(DisassemblyExtension, Module):
         """
         super().do(data, options)
 
+        # Validate input
+        try:
+            assert data, "Expecting data"
+        except AssertionError as e:
+            self.throw(e)
+
         # Disassemble
         yield self.disassemble(data, arch="X86", mode="64")
 

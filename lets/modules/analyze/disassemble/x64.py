@@ -7,6 +7,7 @@ class X64(DockerExtension, Module):
     """
     Disassemble bytes into x86_64 assembly with an interactive radare2 console.
     """
+    interactive = True
 
     # A list of docker images required by the module.
     images = [

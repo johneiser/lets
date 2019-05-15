@@ -42,4 +42,18 @@ If a sequence of modules requires a little more attention (like condition handli
 .. literalinclude:: ../../workflows/sample.py
    :language: python
 
+========
+REST API
+========
+
+**lets** can also be served remotely as a rest api.  Modules can be accessed with a request to /lets/<module> with input data in the body and configuration options in the url query string.  Note that this is only valid for non-interactive modules.
+
+.. code-block:: bash
+
+   $ python lets/api/manage.py runserver 0:8080
+   # Listening...
+
+.. literalinclude:: ../../workflows/api.sh
+   :language: bash
+
 Browse the *lets/modules* folder, use bash autocomplete, or check out :doc:`modules` to see what modules are available.  If you're interested in building your own modules and contributing to the framework, refer to :doc:`development`.

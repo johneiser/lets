@@ -19,6 +19,12 @@ class Base64(Module):
         """
         super().do(data, options)
 
+        # Validate input
+        try:
+            assert data, "Expecting data"
+        except AssertionError as e:
+            self.throw(e)
+
         yield base64.b64decode(data)
 
     def test(self):

@@ -19,6 +19,12 @@ class Hex(Module):
         """
         super().do(data, options)
 
+        # Validate input
+        try:
+            assert data, "Expecting data"
+        except AssertionError as e:
+            self.throw(e)
+
         yield binascii.hexlify(data)
 
     def test(self):
