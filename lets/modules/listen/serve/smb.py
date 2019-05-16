@@ -88,8 +88,9 @@ class Smb(DockerExtension, Module):
             # Synchronize with container
             container.interact()
 
-    @unittest.skip("Interactive, no tests.")
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
+        # Verify required docker images can be produced
+        self._prep()

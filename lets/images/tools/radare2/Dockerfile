@@ -1,3 +1,3 @@
 FROM kalilinux/kali-linux-docker:latest
 
-RUN apt-get update && apt-get install -y radare2
+RUN apt-get update && apt-get install -qy radare2

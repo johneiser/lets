@@ -1,6 +1,6 @@
 FROM python:3
 
-RUN apt-get update && apt-get install -y git cmake
+RUN apt-get update && apt-get install -qy git cmake
 RUN git clone https://github.com/keystone-engine/keystone.git /opt/keystone
 RUN cd /opt/keystone && mkdir build && cd build && ../make-share.sh && make install
 RUN ldconfig

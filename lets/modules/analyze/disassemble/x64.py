@@ -62,9 +62,9 @@ class X64(DockerExtension, Module):
 
                 container.interact()
 
-    @unittest.skip("Interactive, no tests.")
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
-        pass
+        # Verify required docker images can be produced
+        self._prep()

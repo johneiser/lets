@@ -2,6 +2,15 @@
 Changelog
 =========
 
+0.1.7
+^^^^^
+
+May 16, 2019
+
+- Replaced django SECRET_KEY with random generator
+- Removed some default django accessories from api
+- Improved logging for docker image retrieval
+
 0.1.6
 ^^^^^
 

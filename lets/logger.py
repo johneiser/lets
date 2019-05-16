@@ -1,9 +1,20 @@
-import logging
+import os, sys, logging
+
+# Configure logging (WARNING+ -> stderr)
+STREAM = sys.stderr
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.WARNING)
+HANDLER = logging.StreamHandler(STREAM)
+HANDLER.setLevel(logging.WARNING)
+LOGGER.addHandler(HANDLER)
 
 class Logger(object):
     """
     Logging mixin class, enabling logging functionality across modules.
     """
+    _log_logger = LOGGER
+    _log_handler = HANDLER
+    _log_stream = STREAM
 
     class Exception(Exception):
         """

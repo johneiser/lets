@@ -4,13 +4,6 @@ sys.dont_write_bytecode = True
 from lets.utility import Utility
 from lets.logger import Logger
 
-# Configure logging (WARNING+ -> stderr)
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.WARNING)
-HANDLER = logging.StreamHandler(sys.stderr)
-HANDLER.setLevel(logging.WARNING)
-LOGGER.addHandler(HANDLER)
-
 class Module(Logger, unittest.TestCase):
     """
     Abstract module class, from which all modules inherit.  Provides
@@ -228,13 +221,13 @@ class Module(Logger, unittest.TestCase):
 
         if self.options.get("verbose"):
             # Adjust logging down to INFO
-            HANDLER.setLevel(logging.INFO)
-            LOGGER.setLevel(logging.INFO)
+            self._log_handler.setLevel(logging.INFO)
+            self._log_logger.setLevel(logging.INFO)
 
         # if self.options.get("quiet"):
         #     # Adjust logging up to ERROR
-        #     HANDLER.setLevel(logging.ERROR)
-        #     LOGGER.setLevel(logging.ERROR)
+        #     self._log_handler.setLevel(logging.ERROR)
+        #     self._log_logger.setLevel(logging.ERROR)
             
         self.info("Running module with %d bytes and options: %s" % (len(data if data else b""), pprint.pformat(self.options)))
 
@@ -244,8 +237,8 @@ class Module(Logger, unittest.TestCase):
         """
         Make any necessary preparations for test.
         """
-        HANDLER.setLevel(logging.ERROR)
-        LOGGER.setLevel(logging.ERROR)
+        self._log_handler.setLevel(logging.ERROR)
+        self._log_logger.setLevel(logging.ERROR)
         pass
 
     def test(self):

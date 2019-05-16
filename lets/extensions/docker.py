@@ -1,4 +1,4 @@
-import os, sys, argparse, pprint, docker, logging, tempfile, subprocess
+import os, sys, argparse, pprint, docker, logging, tempfile, subprocess, json
 
 from lets.extension import Extension
 from lets.logger import Logger
@@ -165,46 +165,64 @@ class DockerExtension(Extension, object):
 
             # Check if image already exists
             try:
-                self.info("Checking for existing docker image: %s" % tag)
                 image = self.client.images.get(tag)
+                if image is not None:
+                    self.info("Found required docker image: %s" % tag)
+                    continue
+
             except docker.errors.ImageNotFound as e:
                 pass
             except docker.errors.APIError as e:
                 self.throw(e)
 
-            if image is None:
-                # Check if image can be build locally
-                try:
+            self.warn("Missing required docker image: %s" % tag)
+
+            # Check if image can be built locally
+            try:
+                [name,_,version] = tag.partition(":")
+                path = os.path.sep.join([Utility.core_directory(), "images", name])
+
+                if os.path.isdir(path):
                     self.info("Trying to build docker image: %s" % tag)
-                    [name,_,version] = tag.partition(":")
-                    path = os.path.sep.join([Utility.core_directory(), "images", name])
-                    image, logs = self.client.images.build(
-                        tag=tag,
-                        path=path,
-                        pull=True)
-                except docker.errors.BuildError as e:
-                    self.throw(e)
-                except docker.errors.APIError as e:
-                    self.throw(e)
-                except TypeError as e:
-                    pass
+                    proc = subprocess.Popen("docker build --rm -t %s %s" % (tag, path),
+                        shell=True,
+                        stdout=self._log_stream,
+                        stderr=self._log_stream)
+                    proc.communicate()
 
-            if image is None:
-                # Check if image can be pulled remotely
-                try:
-                    self.info("Trying to pull docker image: %s" % tag)
-                    image = self.client.images.pull(tag)
-                except docker.errors.ImageNotFound as e:
-                    pass
-                except docker.errors.APIError as e:
-                    self.throw(e)
+                image = self.client.images.get(tag)
+                if image is not None:
+                    self.info("Built required docker image: %s" % tag)
+                    continue
 
-            if image is None:
-                # No more options, throw exception
-                self.throw(Exception("Missing required docker image: %s" % tag))
+            except docker.errors.ImageNotFound as e:
+                pass
+            except docker.errors.BuildError as e:
+                self.throw(e)
+            except docker.errors.APIError as e:
+                self.throw(e)
 
-            else:
-                self.info("Acquired docker image: %s" % tag)
+            # Check if image can be pulled remotely
+            try:
+                self.info("Trying to pull docker image: %s" % tag)
+                proc = subprocess.Popen("docker pull %s" % (tag),
+                    shell=True,
+                    stdout=self._log_stream,
+                    stderr=self._log_stream)
+                proc.communicate()
+
+                image = self.client.images.get(tag)
+                if image is not None:
+                    self.info("Pulled required docker image: %s" % tag)
+                    continue
+                
+            except docker.errors.ImageNotFound as e:
+                pass
+            except docker.errors.APIError as e:
+                self.throw(e)
+
+            # No more options, throw exception
+            self.throw(Exception("Unable to find required docker image: %s" % tag))
 
     def usage(self) -> object:
         parser = super().usage()
