@@ -66,7 +66,7 @@ Here is an example module illustrating these concepts:
 Extension
 =========
 
-Modules can be *extended* to inherit extra capabilities.  For example, modules that cannot solely rely on just a python script can inherit **DockerExtension**.  DockerExtension maintains a list of docker images required for the module and provides methods and classes to enable the use of docker components.
+Modules can be *extended* to inherit extra capabilities.  For example, modules that cannot solely rely on just a python script can inherit **DockerExtension**.  DockerExtension maintains a list of docker images required for the module and provides methods and classes to enable the use of docker containers.
 
 .. autoclass:: lets.extensions.docker.DockerExtension
    :noindex:
@@ -82,4 +82,4 @@ Here is an example docker module illustrating these concepts:
 .. literalinclude:: ../../lets/modules/sample/mydockermodule.py
    :language: python
 
-Check out the :doc:`extensions` available to each module.
+Check out the :doc:`extensions` available to each of the many :doc:`modules`.

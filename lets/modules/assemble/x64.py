@@ -11,7 +11,7 @@ class X64(AssemblyExtension, Module):
 
     # A list of docker images required by the module.
     images = [
-        "tools/keystone:latest"
+        "local/tools/keystone:latest"
     ]
 
     def do(self, data:bytes=None, options:dict=None) -> bytes:

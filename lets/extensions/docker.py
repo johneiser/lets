@@ -7,12 +7,13 @@ from lets.utility import Utility
 class DockerExtension(Extension, object):
     """
     Extend a module with specific utilities for handling
-    docker instances.
+    docker containers.
     """
 
     images = []
     """
-    A list of docker images required by the module.
+    A list of docker images required by the module. For custom images, this
+    extension will first check for lets/images/<custom/image>/Dockerfile.
     """
 
     @property
@@ -29,6 +30,12 @@ class DockerExtension(Extension, object):
     class IO(object):
         """
         Context manager for using input/output files with a docker container.
+        """
+
+        volumes = {}
+        """
+        A dict representing the infile and outfile, appropriate for constructing
+        a docker container.
         """
 
         def __init__(self, data:bytes=None, infile:str="/data/in", outfile:str="/data/out"):

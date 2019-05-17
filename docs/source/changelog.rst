@@ -7,6 +7,7 @@ Changelog
 
 May 16, 2019
 
+- Moved local images to images/local
 - Adjusted sample api workflow
 - Replaced django SECRET_KEY with random generator
 - Removed some default django accessories from api

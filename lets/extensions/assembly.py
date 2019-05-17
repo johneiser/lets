@@ -29,7 +29,7 @@ class AssemblyExtension(DockerExtension, object):
             # Prepare container with input file and output file
             # mounted as volumes
             with self.Container(
-                image="tools/keystone:latest",
+                image="local/tools/keystone:latest",
                 network_disabled=True,
                 volumes=io.volumes,
                 command=cmd) as container:
@@ -47,8 +47,8 @@ class AssemblyExtension(DockerExtension, object):
         Prepare all required docker images.
         """
         # Ensure capstone image is prepared
-        if not "tools/keystone" in [i.split(":")[0] for i in self.images]:
-            self.images.append("tools/keystone:latest")
+        if not "local/tools/keystone" in [i.split(":")[0] for i in self.images]:
+            self.images.append("local/tools/keystone:latest")
 
         super()._prep()
 
@@ -76,7 +76,7 @@ class DisassemblyExtension(DockerExtension, object):
             # Prepare container with input file and output file
             # mounted as volumes
             with self.Container(
-                image="tools/capstone:latest",
+                image="local/tools/capstone:latest",
                 network_disabled=True,
                 volumes=io.volumes,
                 command=cmd) as container:
@@ -94,7 +94,7 @@ class DisassemblyExtension(DockerExtension, object):
         Prepare all required docker images.
         """
         # Ensure capstone image is prepared
-        if not "tools/capstone" in [i.split(":")[0] for i in self.images]:
-            self.images.append("tools/capstone:latest")
+        if not "local/tools/capstone" in [i.split(":")[0] for i in self.images]:
+            self.images.append("local/tools/capstone:latest")
 
         super()._prep()

@@ -11,7 +11,7 @@ class X86(DisassemblyExtension, Module):
 
     # A list of docker images required by the module.
     images = [
-        "tools/capstone:latest"
+        "local/tools/capstone:latest"
     ]
 
     def do(self, data:bytes=None, options:dict=None) -> bytes:

@@ -11,7 +11,7 @@ class X64(DockerExtension, Module):
 
     # A list of docker images required by the module.
     images = [
-        "tools/radare2:latest"
+        "local/tools/radare2:latest"
     ]
 
     def usage(self) -> object:
@@ -53,7 +53,7 @@ class X64(DockerExtension, Module):
             # Prepare container with input file and output file
             # mounted as volumes
             with self.Container(
-                image="tools/radare2:latest",
+                image="local/tools/radare2:latest",
                 network_disabled=True,
                 volumes=io.volumes,
                 stdin_open=True,
