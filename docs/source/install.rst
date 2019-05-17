@@ -6,9 +6,9 @@ Install
 Requirements
 ============
 
-- Linux (tested with Ubuntu 14.04)
-- `Docker <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_ (tested with 17.09.0-ce)
-- Python3 (tested with Python 3.6.3)
+- Linux (tested with Ubuntu 16.04)
+- `Docker <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_
+- Python >= 3.5
 
 ===================
 Virtual Environment
