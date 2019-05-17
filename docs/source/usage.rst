@@ -53,7 +53,7 @@ REST API
    $ python lets/api/manage.py runserver 0:8080
    # Listening...
 
-.. literalinclude:: ../../workflows/api.sh
+.. literalinclude:: ../../workflows/sample_api.sh
    :language: bash
 
 Browse the *lets/modules* folder, use bash autocomplete, or check out :doc:`modules` to see what modules are available.  If you're interested in building your own modules and contributing to the framework, refer to :doc:`development`.

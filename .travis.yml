@@ -1,15 +1,37 @@
-dist: xenial
 language: python
-python:
-  - 3.4
-  - 3.5
-  - 3.6
+
+matrix:
+  include:
+    - name: "Python 3.5 on Ubuntu 16.04"
+      python: 3.5
+      dist: xenial
+    - name: "Python 3.6 on Ubuntu 16.04"
+      python: 3.6
+      dist: xenial
+    - name: "Python 3.7 on Ubuntu 16.04"
+      python: 3.7
+      dist: xenial
+    - name: "Python 3.7 on macOS 10.14.3"
+      os: osx
+      osx_image: xcode10.2
+      language: shell
+    - name: "Python 3.7 on Windows 10"
+      os: windows
+      language: shell
+      before_install: choco install python
+      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+
+branches:
+  only:
+    - master
 
 services:
   - docker
 
 before_install:
 
+install: pip3 install --upgrade pip
+
 script:
-  - python test.py
-  - python lets/api/manage.py test rest
+  - python3 test.py || python test.py
+  - python3 lets/api/manage.py test rest || python3 lets/api/manage.py test rest
