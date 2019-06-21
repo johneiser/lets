@@ -116,8 +116,14 @@ class DockerExtension(Extension, object):
             """
             Close container context and clean up container.
             """
+            pass
+
+        def __del__(self):
+            """
+            Clean up container.
+            """
             try:
-                if self.container:
+                if hasattr(self, "container") and self.container:
                     self.container.kill()
             except docker.errors.APIError as e:
                 pass

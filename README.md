@@ -6,7 +6,7 @@
 
 A modular framework for arbitrary action, **lets** enables tasks of varying complexity to be chained together with a consistent and simple interface.
 
-As a modular framework, each module accepts input and options, executes some functionality, and returns some output.
+Each module accepts input and options, executes some functionality, and returns some output.
 
 ```
 [input] | lets <module> [options]

@@ -13,7 +13,7 @@ class Messagebox(DockerExtension, Module):
 
     # A list of docker images required by the module.
     images = [
-        "local/tools/metasploit:latest"
+        "local/kali/metasploit:latest"
     ]
 
     def usage(self) -> object:
@@ -91,7 +91,7 @@ class Messagebox(DockerExtension, Module):
 
             # Prepare container with output file mounted as volume
             with self.Container(
-                image="local/tools/metasploit:latest",
+                image="local/kali/metasploit:latest",
                 network_disabled=True,
                 volumes=io.volumes,
                 command=cmd) as container:

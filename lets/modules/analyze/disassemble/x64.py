@@ -11,7 +11,7 @@ class X64(DockerExtension, Module):
 
     # A list of docker images required by the module.
     images = [
-        "local/tools/radare2:latest"
+        "local/kali/radare2:latest"
     ]
 
     def usage(self) -> object:
@@ -45,7 +45,7 @@ class X64(DockerExtension, Module):
             self.throw(e)
 
         # Build command
-        cmd = "r2 -a x86 -b 32 -c Vp /data/in" # -A
+        cmd = "r2 -a x86 -b 64 -c Vp -A /data/in"
 
         # Prepare input and output files
         with self.IO(data, infile="/data/in", outfile="/data/out") as io:
@@ -53,7 +53,7 @@ class X64(DockerExtension, Module):
             # Prepare container with input file and output file
             # mounted as volumes
             with self.Container(
-                image="local/tools/radare2:latest",
+                image="local/kali/radare2:latest",
                 network_disabled=True,
                 volumes=io.volumes,
                 stdin_open=True,

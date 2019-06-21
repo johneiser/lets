@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.1.8
+^^^^^
+
+June 21, 2019
+
+- Moved some docker images to "kali" folder
+- Moved docker cleanup from __exit__ to __del__
+
 0.1.7
 ^^^^^
 
