@@ -2,7 +2,7 @@ import os, sys, argparse, pprint, docker, logging, tempfile, subprocess, json
 
 from lets.extension import Extension
 from lets.logger import Logger
-from lets.utility import Utility
+from lets.utility import Utility, TEMP_DIRECTORY
 
 class DockerExtension(Extension, object):
     """
@@ -52,7 +52,7 @@ class DockerExtension(Extension, object):
 
             # Configure input file
             if data:
-                self.infile = tempfile.NamedTemporaryFile(dir="/tmp")
+                self.infile = tempfile.NamedTemporaryFile(dir=TEMP_DIRECTORY)
                 self.infile.write(data)
                 self.infile.seek(0)
                 self.volumes[self.infile.name] = {
@@ -61,7 +61,7 @@ class DockerExtension(Extension, object):
                 }
 
             # Configure output file
-            self.outfile = tempfile.NamedTemporaryFile(dir="/tmp")
+            self.outfile = tempfile.NamedTemporaryFile(dir=TEMP_DIRECTORY)
             self.volumes[self.outfile.name] = {
                 "bind" : outfile,
                 "mode" : "rw"

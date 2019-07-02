@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.1.9
+^^^^^
+
+- Added modules scan/http/version, scan/dns/lookup
+- Allow for global specification of temporary directory
+
 0.1.8
 ^^^^^
 

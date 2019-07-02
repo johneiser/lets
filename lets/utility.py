@@ -1,5 +1,7 @@
 import os, sys
 
+TEMP_DIRECTORY = "/tmp"
+
 class Utility(object):
     """
     Class providing generic global utility functions.
