@@ -5,11 +5,16 @@ Changelog
 0.1.10
 ^^^^^^
 
+July 2, 2019
+
+- Hide samples from doc module list
 - Added modules: encode/bash/base64, encode/python/base64, encode/powershell/base64
 - Added "_" directories for private development
 
 0.1.9
 ^^^^^
+
+July 1, 2019
 
 - Added modules: scan/http/version, scan/dns/lookup
 - Allow for global specification of temporary directory

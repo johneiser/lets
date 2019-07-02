@@ -28,23 +28,28 @@ Modules
 """
 
     for label in Module.identify_all():
-        mod = Module.instantiate(label)
-        if mod:
 
-            # Description
-            yield """
+        # Exclude samples
+        if not label.startswtih("lets.modules.sample"):
+
+            # Instantiate module            
+            mod = Module.instantiate(label)
+            if mod:
+
+                # Description
+                yield """
 .. autoclass:: %s.%s
 """ % (label, mod.__class__.__name__)
 
-            # Docker-Specific
-            if isinstance(mod, DockerExtension):
+                # Docker-Specific
+                if isinstance(mod, DockerExtension):
 
-                yield """
+                    yield """
    Docker images: %s
 """ % (pprint.pformat(mod.images))
 
-            # Usage
-            yield """
+                # Usage
+                yield """
 .. code-block:: bash
 
    %s
