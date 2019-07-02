@@ -25,3 +25,7 @@ venv.bak/
 
 # Databases
 db.sqlite3
+
+# Development
+lets/modules/_
+lets/images/_

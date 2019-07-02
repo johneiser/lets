@@ -2,10 +2,16 @@
 Changelog
 =========
 
+0.1.10
+^^^^^^
+
+- Added modules: encode/bash/base64, encode/python/base64, encode/powershell/base64
+- Added "_" directories for private development
+
 0.1.9
 ^^^^^
 
-- Added modules scan/http/version, scan/dns/lookup
+- Added modules: scan/http/version, scan/dns/lookup
 - Allow for global specification of temporary directory
 
 0.1.8
