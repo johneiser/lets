@@ -30,7 +30,7 @@ Modules
     for label in Module.identify_all():
 
         # Exclude samples
-        if not label.startswtih("lets.modules.sample"):
+        if not label.startswith("lets.modules.sample"):
 
             # Instantiate module            
             mod = Module.instantiate(label)
