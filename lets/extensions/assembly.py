@@ -46,7 +46,7 @@ class AssemblyExtension(DockerExtension, object):
         """
         Prepare all required docker images.
         """
-        # Ensure capstone image is prepared
+        # Ensure keystone image is prepared
         if not "local/tools/keystone" in [i.split(":")[0] for i in self.images]:
             self.images.append("local/tools/keystone:latest")
 

@@ -2,16 +2,16 @@ from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import base64, string
+import gzip, base64, string
 
-class Base64(DockerExtension, Module):
+class Compress(DockerExtension, Module):
     """
-    Base64 encode a bash script and prepend a decode stub.
+    Compress and Base64 encode a powershell script and prepend a decode/decompress stub.
     """
 
     # A list of docker images required by the module.
     images = [
-        "debian:latest"
+        "mcr.microsoft.com/powershell:latest"
     ]
 
     def usage(self) -> object:
@@ -21,12 +21,6 @@ class Base64(DockerExtension, Module):
         :return: ArgumentParser object
         """
         parser = super().usage()
-
-        # Customize shell
-        parser.add_argument("-s", "--shell",
-            help="use the specified shell",
-            type=str,
-            default="/bin/bash")
 
         return parser
 
@@ -50,12 +44,15 @@ class Base64(DockerExtension, Module):
         except AssertionError as e:
             self.throw(e)
 
+        # Compress command
+        compressed = gzip.compress(data, compresslevel=9)
+
         # Encode command
-        encoded = base64.b64encode(data)
+        encoded = base64.b64encode(compressed)
         self.options["encoded"] = encoded.decode()
         
         # Place encoded command in harness
-        cmd = "echo '%(encoded)s'|base64 -d|%(shell)s" % self.options
+        cmd = "IEX (New-Object System.IO.StreamReader($(New-Object System.IO.Compression.GzipStream($(New-Object System.IO.MemoryStream(,[System.Convert]::FromBase64String('%(encoded)s'))),[System.IO.Compression.CompressionMode]::Decompress)),[System.Text.Encoding]::UTF8)).ReadToEnd()" % self.options
 
         # Convert harness to bytes and return
         yield cmd.encode()
@@ -64,20 +61,20 @@ class Base64(DockerExtension, Module):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Test encoding
+        # Test encoding (gzip header not consistent)
         self.assertTrue(
-            b"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==" in 
+            b"10C/wEAAf/+AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/3OMBSkAAQAA" in 
             b"".join(self.do(bytes(range(0, 256)))),
             "All bytes produced innacurate results")
 
         # Test execution
         test = string.ascii_letters + string.digits
-        testcmd = "echo '%s'" % test
+        testcmd = "Write-Output '%s'" % test
         encoded = b"".join(self.do(testcmd.encode()))
-        cmd = "bash -c \"%s\"" % encoded.decode()
+        cmd = "pwsh -c \"%s\"" % encoded.decode()
 
         with self.Container(
-            image="debian:latest",
+            image="mcr.microsoft.com/powershell:latest",
             network_disabled=True,
             command=cmd) as container:
 
@@ -89,4 +86,3 @@ class Base64(DockerExtension, Module):
 
             # Verify execution was successful
             self.assertEqual(output.decode(), test, "Execution produced inaccurate results")
-            

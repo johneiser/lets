@@ -242,10 +242,11 @@ class DockerExtension(Extension, object):
 
         return parser
     
-    def do(self, data:bytes=None, options:dict=None) -> bytes:
+    def do(self, data:bytes=None, options:dict=None, prep:bool=True) -> bytes:
         super().do(data, options)
 
-        self._prep()
+        if prep:
+            self._prep()
 
         return iter(())
 

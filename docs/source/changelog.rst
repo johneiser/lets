@@ -2,6 +2,16 @@
 Changelog
 =========
 
+0.1.11
+^^^^^^
+
+July 5, 2019
+
+- Allowed for use of docker extension without prep
+- Modified some tests to exclude irrelevant information
+- Added modules: encode/bash/compress, encode/python/compress, encode/powershell/compress
+- Added modules: encode/python/rc4, encode/powershell/rc4
+
 0.1.10
 ^^^^^^
 

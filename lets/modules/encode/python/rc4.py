@@ -2,11 +2,13 @@ from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import base64, string
+import os, zlib, base64, string
+from Crypto.Cipher import ARC4
+from Crypto.Hash import SHA256
 
-class Base64(DockerExtension, Module):
+class RC4(DockerExtension, Module):
     """
-    Base64 encode a python script and prepend a decode stub.
+    Compress, Encrypt and Base64 encode a python script and prepend a decode/decrypt/decompress stub.
     """
 
     # A list of docker images required by the module.
@@ -22,6 +24,11 @@ class Base64(DockerExtension, Module):
         :return: ArgumentParser object
         """
         parser = super().usage()
+
+        # Set encryption parameters
+        parser.add_argument("-k", "--key",
+            help="key used for RC4 encryption",
+            type=str)
 
         return parser
 
@@ -45,12 +52,52 @@ class Base64(DockerExtension, Module):
         except AssertionError as e:
             self.throw(e)
 
+        # Normalize key
+        if self.options.get("key"):
+            key = SHA256.new(self.options.get("key").encode()).digest()
+        else:
+            key = os.urandom(32)
+
+        # Compress command
+        compressed = zlib.compress(data, level=9)
+
+        # Encrypt command
+        encrypted = ARC4.new(key).encrypt(compressed)
+
         # Encode command
-        encoded = base64.b64encode(data)
+        encoded = base64.b64encode(encrypted)
         self.options["encoded"] = encoded.decode()
-        
-        # Place encoded command in harness
-        cmd = "import base64,sys;exec(base64.b64decode({2:str,3:lambda b:bytes(b,'UTF-8')}[sys.version_info[0]]('%(encoded)s')))" % self.options
+
+        # Encode key
+        encoded_key = base64.b64encode(key)
+        self.options["encoded_key"] = encoded_key.decode()
+
+        # Build RC4
+
+        # def rc4(d:int[], k:int[]) -> int[]
+        # """
+        # Encrypt/Decrypt and array of bytes using RC4.
+        # 
+        # :param d: Data to encrypt/decrypt
+        # :param k: Key to use for encryption/decryption
+        # :return: Bytes encrypted/decrypted
+        # """
+        rc4 = """S,j,o=list(range(256)),0,[]
+for i in list(range(256)):
+    j=(j+S[i]+k[i%len(k)])%256
+    S[i],S[j]=S[j],S[i]
+i=j=0
+for b in d:
+    i=(i+1)%256
+    j=(j+S[i])%256
+    S[i],S[j]=S[j],S[i]
+    K=S[(S[i]+S[j])%256]
+    o.append(b^K)"""
+
+        self.options["encoded_rc4"] = base64.b64encode(rc4.encode()).decode()
+
+        # Place rc4 and encoded command in harness
+        cmd = """import base64,sys,zlib;f={2:ord,3:lambda b:b}[sys.version_info[0]];v={'d':[f(b) for b in base64.b64decode('%(encoded)s')],'k':[f(b) for b in base64.b64decode('%(encoded_key)s')]};exec(base64.b64decode('%(encoded_rc4)s'),globals(),v);exec(zlib.decompress(bytes(bytearray(v.get('o')))))""" % self.options
 
         # Convert harness to bytes and return
         yield cmd.encode()
@@ -59,11 +106,11 @@ class Base64(DockerExtension, Module):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Test encoding
+        # Test key encoding
         self.assertTrue(
-            b"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==" in 
-            b"".join(self.do(bytes(range(0, 256)))),
-            "All bytes produced innacurate results")
+            b"IqSAUVlMGUne7XBAhQwfD4dkU39Rkb5Wcy0WpUwdgVM=" in 
+            b"".join(self.do(bytes(range(0, 256)), {"key": "A"*32})),
+            "Key encoding produced innacurate results")
 
         # Test execution
         test = string.ascii_letters + string.digits

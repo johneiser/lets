@@ -2,11 +2,11 @@ from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import base64, string
+import gzip, base64, string
 
-class Base64(DockerExtension, Module):
+class Compress(DockerExtension, Module):
     """
-    Base64 encode a bash script and prepend a decode stub.
+    Compress and Base64 encode a bash script and prepend a decode/decompress stub.
     """
 
     # A list of docker images required by the module.
@@ -50,12 +50,15 @@ class Base64(DockerExtension, Module):
         except AssertionError as e:
             self.throw(e)
 
+        # Compress command
+        compressed = gzip.compress(data, compresslevel=9)
+
         # Encode command
-        encoded = base64.b64encode(data)
+        encoded = base64.b64encode(compressed)
         self.options["encoded"] = encoded.decode()
         
         # Place encoded command in harness
-        cmd = "echo '%(encoded)s'|base64 -d|%(shell)s" % self.options
+        cmd = "echo '%(encoded)s'|base64 -d|gzip -cfd9|%(shell)s" % self.options
 
         # Convert harness to bytes and return
         yield cmd.encode()
@@ -64,9 +67,9 @@ class Base64(DockerExtension, Module):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Test encoding
+        # Test encoding (gzip header not consistent)
         self.assertTrue(
-            b"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==" in 
+            b"10C/wEAAf/+AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/3OMBSkAAQAA" in 
             b"".join(self.do(bytes(range(0, 256)))),
             "All bytes produced innacurate results")
 
