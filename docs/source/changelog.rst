@@ -7,6 +7,7 @@ Changelog
 
 July 5, 2019
 
+- Added pycryptodome to requirements
 - Allowed for use of docker extension without prep
 - Modified some tests to exclude irrelevant information
 - Added modules: encode/bash/compress, encode/python/compress, encode/powershell/compress
