@@ -13,7 +13,9 @@ In a bash terminal, use ``source lets/bin/activate`` to enter the **lets virtual
 .. code-block:: bash
 
    $ source lets/bin/activate
-   (lets) $ echo -n "abcd" | lets encode/base64 -v | lets decode/base64 -v && echo
+   (lets) $ echo -n "abcd" \
+         | lets encode/base64 -v \
+         | lets decode/base64 -v && echo
    [+] |Base64| Running module with 4 bytes and options: {'verbose': True}
    [+] |Base64| Running module with 8 bytes and options: {'verbose': True}
    abcd

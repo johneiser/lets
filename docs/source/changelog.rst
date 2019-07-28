@@ -2,6 +2,19 @@
 Changelog
 =========
 
+0.2.1
+^^^^^
+
+July 27, 2019
+
+- Refactored docker extension to use a function decorator for image preparation
+- Added codecov
+- Moved Django database to in-memory only
+- Added modules: encrypt/rc4
+- Added modules: format/bash/python, format/bash/osx/x86, format/bash/osx/x64
+- Added modules: format/osx/x64/python, format/osx/x86/python
+- Added modules: format/python/bash
+
 0.1.11
 ^^^^^^
 

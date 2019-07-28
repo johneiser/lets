@@ -2,6 +2,7 @@ from lets.module import Module
 
 import base64
 
+
 class Base64(Module):
     """
     Base64 decode a string of bytes.

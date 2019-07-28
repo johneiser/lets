@@ -4,6 +4,7 @@ sys.dont_write_bytecode = True
 from lets.utility import Utility
 from lets.logger import Logger
 
+
 class Module(Logger, unittest.TestCase):
     """
     Abstract module class, from which all modules inherit.  Provides
@@ -191,9 +192,9 @@ class Module(Logger, unittest.TestCase):
         parser = self.usage()
 
         for action in parser._actions:
-            if not "SUPPRESS" in action.dest:
+            if "SUPPRESS" not in action.dest:
                 try:
-                    if not "SUPPRESS" in action.default:
+                    if "SUPPRESS" not in action.default:
                         defaults[action.dest] = action.default
                 except TypeError:
                     defaults[action.dest] = action.default
@@ -228,8 +229,9 @@ class Module(Logger, unittest.TestCase):
         #     # Adjust logging up to ERROR
         #     self._log_handler.setLevel(logging.ERROR)
         #     self._log_logger.setLevel(logging.ERROR)
-            
-        self.info("Running module with %d bytes and options: %s" % (len(data if data else b""), pprint.pformat(self.options)))
+
+        self.info("Running module with %d bytes and options: %s" % (
+            len(data if data else b""), pprint.pformat(self.options)))
 
         return iter(())
 

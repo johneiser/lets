@@ -1,5 +1,6 @@
 from lets import module
 
+
 def do(path:str, data:bytes=None, options:dict=None, generate:bool=False) -> bytes:
     """
     Build and execute a module with the specified data

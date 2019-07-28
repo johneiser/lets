@@ -1,18 +1,16 @@
 from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
-import unittest
 
 class X86(DockerExtension, Module):
     """
-    Disassemble bytes into x86 assembly with an interactive radare2 console.
+    Disassemble bytes into x86 assembly with an interactive
+    `radare2`_ console.
+
+    .. _radare2:
+        https://radare.gitbooks.io/radare2book/content/
     """
     interactive = True
-
-    # A list of docker images required by the module.
-    images = [
-        "local/kali/radare2:latest"
-    ]
 
     def usage(self) -> object:
         """
@@ -24,13 +22,12 @@ class X86(DockerExtension, Module):
 
         return parser
 
+    @DockerExtension.ImageDecorator(["local/kali/radare2:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
         Module.do updates self.options with options.
-
-        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
@@ -62,9 +59,8 @@ class X86(DockerExtension, Module):
 
                 container.interact()
 
+    @DockerExtension.ImageDecorator(["local/kali/radare2:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Verify required docker images can be produced
-        self._prep()

@@ -1,18 +1,15 @@
 from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
-import os, unittest
+# Imports required to execute this module
+import os
+
 
 class Smb(DockerExtension, Module):
     """
     Build a listener to serve a local directory as a guest-accessible read-only SMB share.
     """
     interactive = True
-
-    # A list of docker images required by the module.
-    images = [
-        "dperson/samba:latest"
-    ]
 
     def usage(self) -> object:
         """
@@ -36,13 +33,12 @@ class Smb(DockerExtension, Module):
 
         return parser
 
+    @DockerExtension.ImageDecorator(["dperson/samba:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
         Module.do updates self.options with options.
-
-        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
@@ -88,9 +84,8 @@ class Smb(DockerExtension, Module):
             # Synchronize with container
             container.interact()
 
+    @DockerExtension.ImageDecorator(["dperson/samba:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Verify required docker images can be produced
-        self._prep()

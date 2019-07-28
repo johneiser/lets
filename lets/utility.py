@@ -1,11 +1,10 @@
-import os, sys
+import os
 
 TEMP_DIRECTORY = "/tmp"
 
+
 class Utility(object):
-    """
-    Class providing generic global utility functions.
-    """
+    """Class providing generic global utility functions."""
 
     @staticmethod
     def core_directory() -> str:

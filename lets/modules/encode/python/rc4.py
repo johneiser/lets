@@ -6,16 +6,12 @@ import os, zlib, base64, string
 from Crypto.Cipher import ARC4
 from Crypto.Hash import SHA256
 
+
 class RC4(DockerExtension, Module):
     """
-    Compress, Encrypt and Base64 encode a python script and prepend a decode/decrypt/decompress stub.
+    Compress, RC4 encrypt and Base64 encode a python script and prepend a
+    decode/decrypt/decompress stub.
     """
-
-    # A list of docker images required by the module.
-    images = [
-        "python:2",
-        "python:3"
-    ]
 
     def usage(self) -> object:
         """
@@ -38,13 +34,11 @@ class RC4(DockerExtension, Module):
 
         Module.do updates self.options with options.
 
-        DockerExtension.do prepares required docker images.
-
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
         :return: Generator containing results of module execution, in bytes
         """
-        super().do(data, options, prep=False)
+        super().do(data, options)
 
         # Validate input
         try:
@@ -76,7 +70,7 @@ class RC4(DockerExtension, Module):
 
         # def rc4(d:int[], k:int[]) -> int[]
         # """
-        # Encrypt/Decrypt and array of bytes using RC4.
+        # Encrypt/Decrypt an array of bytes using RC4.
         # 
         # :param d: Data to encrypt/decrypt
         # :param k: Key to use for encryption/decryption
@@ -97,11 +91,26 @@ for b in d:
         self.options["encoded_rc4"] = base64.b64encode(rc4.encode()).decode()
 
         # Place rc4 and encoded command in harness
-        cmd = """import base64,sys,zlib;f={2:ord,3:lambda b:b}[sys.version_info[0]];v={'d':[f(b) for b in base64.b64decode('%(encoded)s')],'k':[f(b) for b in base64.b64decode('%(encoded_key)s')]};exec(base64.b64decode('%(encoded_rc4)s'),globals(),v);exec(zlib.decompress(bytes(bytearray(v.get('o')))))""" % self.options
+        cmd = ("import base64,sys,zlib;"+
+
+            # Determine whether version requires the use of `ord`
+            "f={2:ord,3:lambda b:b}[sys.version_info[0]];"+
+
+            # Store encrypted data and key in dictionary
+            "v={'d':[f(b) for b in base64.b64decode('%(encoded)s')],'k':[f(b) for b in base64.b64decode('%(encoded_key)s')]};"+
+
+            # Execute RC4 decryption with encrypted data and key in locals
+            "exec(base64.b64decode('%(encoded_rc4)s'),globals(),v);"+
+
+            # Decompress and execute now decrypted data
+            "exec(zlib.decompress(bytes(bytearray(v.get('o')))));"
+
+            ) % self.options
 
         # Convert harness to bytes and return
         yield cmd.encode()
 
+    @DockerExtension.ImageDecorator(["python:2", "python:3"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.

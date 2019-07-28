@@ -1,26 +1,27 @@
 from lets.module import Module
 from lets.extensions.assembly import AssemblyExtension
 
-# Imports required to execute this module
-import os, base64
 
 class X86(AssemblyExtension, Module):
     """
     Assemble x86 code into bytes.
     """
 
-    # A list of docker images required by the module.
-    images = [
-        "local/tools/keystone:latest"
-    ]
+    def usage(self) -> object:
+        """
+        Configure an ArgumentParser object with options relevant to the module.
+
+        :return: ArgumentParser object
+        """
+        parser = super().usage()
+
+        return parser
 
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
         Module.do updates self.options with options.
-
-        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module

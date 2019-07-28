@@ -1,5 +1,6 @@
 from lets.logger import Logger
 
+
 class Extension(Logger, object):
     """
     Abstract mixin class to be inherited by each extension,

@@ -19,8 +19,7 @@ It is highly recommended to use a `python virtual environment <https://docs.pyth
 .. code-block::
 
    $ pip install virtualenv
-   $ mkdir venv
-   $ virtualenv -p python3 venv
+   $ python -m virtualenv -p python3 venv
    $ source venv/bin/activate
    (venv) $ python --version
    Python 3.6.3

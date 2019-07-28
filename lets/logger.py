@@ -1,4 +1,4 @@
-import os, sys, logging
+import sys, logging
 
 # Configure logging (WARNING+ -> stderr)
 STREAM = sys.stderr

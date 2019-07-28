@@ -1,8 +1,8 @@
-import os, sys, argparse, pprint, docker, logging, tempfile, subprocess, json
-
 from lets.extension import Extension
 from lets.logger import Logger
 from lets.utility import Utility, TEMP_DIRECTORY
+import os, sys, docker, tempfile, subprocess, functools
+
 
 class DockerExtension(Extension, object):
     """
@@ -10,19 +10,8 @@ class DockerExtension(Extension, object):
     docker containers.
     """
 
-    images = []
-    """
-    A list of docker images required by the module. For custom images, this
-    extension will first check for lets/images/<custom/image>/Dockerfile.
-    """
-
     @property
     def client(self) -> object:
-        """
-        Provide a common connection to the docker daemon.
-
-        :return: Docker client object
-        """
         if not (hasattr(self, "_client") and self._client):
             self._client = docker.from_env()
         return self._client
@@ -34,11 +23,12 @@ class DockerExtension(Extension, object):
 
         volumes = {}
         """
-        A dict representing the infile and outfile, appropriate for constructing
-        a docker container.
+        A dict representing the infile and outfile, appropriate for
+        constructing a docker container.
         """
 
-        def __init__(self, data:bytes=None, infile:str="/data/in", outfile:str="/data/out"):
+        def __init__(self, data:bytes=None,
+            infile:str="/data/in", outfile:str="/data/out"):
             """
             Create input and output files.
 
@@ -80,7 +70,12 @@ class DockerExtension(Extension, object):
 
     class Container(Logger, object):
         """
-        Context manager for using a docker container.
+        Context manager to produce a docker container.
+        Simply a wrapper around `Docker-Py Container.run()`_,
+        kwargs can be passed in to customize the container.
+
+        .. _Docker-Py Container.run():
+            https://docker-py.readthedocs.io/en/stable/containers.html#module-docker.models.containers
         """
         def __init__(self, **kwargs):
             """
@@ -101,7 +96,8 @@ class DockerExtension(Extension, object):
             try:
                 client = docker.from_env()
                 self.container = client.containers.run(**kwargs)
-                self.info("Running in new %s docker container: %s" % (kwargs.get("image"), self.container.name))
+                self.info("Running in new %s docker container: %s" %
+                    (kwargs.get("image"), self.container.name))
 
             except docker.errors.APIError as e:
                 self.throw(e)
@@ -169,90 +165,112 @@ class DockerExtension(Extension, object):
                 stderr=sys.stderr)
             proc.communicate()
 
-    def _prep(self):
+    class ImageDecorator(Logger):
         """
-        Prepare all required docker images.
+        Decorator to fetch required docker images prior to the
+        execution of the function.
         """
-        for tag in self.images:
-            image = None
+        def __init__(self, images:list):
+            """
+            Initialize decorator with a list of images.
 
-            # Check if image already exists
-            try:
-                image = self.client.images.get(tag)
-                if image is not None:
-                    self.info("Found required docker image: %s" % tag)
-                    continue
+            :param: Images to fetch prior to execution
+            """
+            self.images = images
 
-            except docker.errors.ImageNotFound as e:
-                pass
-            except docker.errors.APIError as e:
-                self.throw(e)
+        def __call__(self, func, *args, **kwargs) -> object:
+            """
+            Build a decorated wrapper function around the original function.
 
-            self.warn("Missing required docker image: %s" % tag)
+            :param func: Original function
+            :param *args: Original *args
+            :param **kwargs: Original **kwargs
+            :return: Decorated wrapper function
+            """
+            # Keep docustrings for original function
+            @functools.wraps(func)
 
-            # Check if image can be built locally
-            try:
-                [name,_,version] = tag.partition(":")
-                path = os.path.sep.join([Utility.core_directory(), "images", name])
+            # Build wrapper function
+            def wrapper(*args, **kwargs):
 
-                if os.path.isdir(path):
-                    self.info("Trying to build docker image: %s" % tag)
-                    proc = subprocess.Popen("docker build --rm -t %s %s" % (tag, path),
+                # Build required docker images before executing
+                self.prep(self.images)
+                return func(*args, **kwargs)
+
+            return wrapper
+
+        @property
+        def client(self) -> object:
+            if not (hasattr(self, "_client") and self._client):
+                self._client = docker.from_env()
+            return self._client
+
+        def prep(self, images:list):
+            """
+            Prepare required docker images.
+
+            :param images: List of required docker images
+            """
+            for tag in images:
+                image = None
+
+                # Check if image already exists
+                try:
+                    image = self.client.images.get(tag)
+                    if image is not None:
+                        # self.info("Found required docker image: %s" % tag)
+                        continue
+
+                except docker.errors.ImageNotFound as e:
+                    pass
+                except docker.errors.APIError as e:
+                    self.throw(e)
+
+                self.warn("Missing required docker image: %s" % tag)
+
+                # Check if image can be built locally
+                try:
+                    [name,_,version] = tag.partition(":")
+                    path = os.path.sep.join([Utility.core_directory(), "images", name])
+
+                    if os.path.isdir(path):
+                        # self.info("Trying to build docker image: %s" % tag)
+                        proc = subprocess.Popen("docker build --rm -t %s %s" % (tag, path),
+                            shell=True,
+                            stdout=self._log_stream,
+                            stderr=self._log_stream)
+                        proc.communicate()
+
+                    image = self.client.images.get(tag)
+                    if image is not None:
+                        # self.info("Built required docker image: %s" % tag)
+                        continue
+
+                except docker.errors.ImageNotFound as e:
+                    pass
+                except docker.errors.BuildError as e:
+                    self.throw(e)
+                except docker.errors.APIError as e:
+                    self.throw(e)
+
+                # Check if image can be pulled remotely
+                try:
+                    # self.info("Trying to pull docker image: %s" % tag)
+                    proc = subprocess.Popen("docker pull %s" % (tag),
                         shell=True,
                         stdout=self._log_stream,
                         stderr=self._log_stream)
                     proc.communicate()
 
-                image = self.client.images.get(tag)
-                if image is not None:
-                    self.info("Built required docker image: %s" % tag)
-                    continue
+                    image = self.client.images.get(tag)
+                    if image is not None:
+                        # self.info("Pulled required docker image: %s" % tag)
+                        continue
 
-            except docker.errors.ImageNotFound as e:
-                pass
-            except docker.errors.BuildError as e:
-                self.throw(e)
-            except docker.errors.APIError as e:
-                self.throw(e)
+                except docker.errors.ImageNotFound as e:
+                    pass
+                except docker.errors.APIError as e:
+                    self.throw(e)
 
-            # Check if image can be pulled remotely
-            try:
-                self.info("Trying to pull docker image: %s" % tag)
-                proc = subprocess.Popen("docker pull %s" % (tag),
-                    shell=True,
-                    stdout=self._log_stream,
-                    stderr=self._log_stream)
-                proc.communicate()
-
-                image = self.client.images.get(tag)
-                if image is not None:
-                    self.info("Pulled required docker image: %s" % tag)
-                    continue
-                
-            except docker.errors.ImageNotFound as e:
-                pass
-            except docker.errors.APIError as e:
-                self.throw(e)
-
-            # No more options, throw exception
-            self.throw(Exception("Unable to find required docker image: %s" % tag))
-
-    def usage(self) -> object:
-        parser = super().usage()
-
-        return parser
-    
-    def do(self, data:bytes=None, options:dict=None, prep:bool=True) -> bytes:
-        super().do(data, options)
-
-        if prep:
-            self._prep()
-
-        return iter(())
-
-    def setUp(self):
-        super().setUp()
-        self._prep()
-
-    def tearDown(self):
-        super().tearDown()
+                # No more options, throw exception
+                self.throw(Exception("Unable to find required docker image: %s" % tag))

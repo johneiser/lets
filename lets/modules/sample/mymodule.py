@@ -1,12 +1,14 @@
 from lets.module import Module
 
 # Imports required to execute this module
-import os, base64
+import base64
+
 
 class MyModule(Module):
     """
-    [Description of what type of data this module expects, what configuration options
-    it accepts, what type of execution it performs, and what data it produces, if any].
+    [Description of what type of data this module expects, what
+    configuration options it accepts, what type of execution it
+    performs, and what data it produces, if any].
 
     [Notes and warnings]
 
@@ -15,7 +17,8 @@ class MyModule(Module):
 
     def usage(self) -> object:
         """
-        Configure an ArgumentParser object with options relevant to the module.
+        Configure an ArgumentParser object with options relevant
+        to the module.
 
         :return: ArgumentParser object
         """
@@ -37,7 +40,8 @@ class MyModule(Module):
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
-        :return: Generator containing results of module execution, in bytes
+        :return: Generator containing results of module execution,
+            in bytes
         """
         super().do(data, options)
         

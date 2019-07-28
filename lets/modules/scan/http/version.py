@@ -1,17 +1,11 @@
 from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
-# Imports required to execute this module
 
 class Version(DockerExtension, Module):
     """
     Scan an HTTP server to determine the software versions it uses.
     """
-
-    # A list of docker images required by the module.
-    images = [
-        "local/kali/whatweb:latest"
-    ]
 
     def usage(self) -> object:
         """
@@ -34,13 +28,12 @@ class Version(DockerExtension, Module):
 
         return parser
 
+    @DockerExtension.ImageDecorator(["local/kali/whatweb:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
         Module.do updates self.options with options.
-
-        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
@@ -69,9 +62,8 @@ class Version(DockerExtension, Module):
 
             container.wait()
 
+    @DockerExtension.ImageDecorator(["local/kali/whatweb:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Verify required docker images can be produced
-        self._prep()

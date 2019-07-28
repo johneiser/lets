@@ -2,26 +2,24 @@ from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import os, base64
+import base64
+
 
 class MyDockerModule(DockerExtension, Module):
     """
-    [Description of what type of data this module expects, what configuration options
-    it accepts, what type of execution it performs, and what data it produces, if any].
+    [Description of what type of data this module expects, what
+    configuration options it accepts, what type of execution it
+    performs, and what data it produces, if any].
 
     [Notes and warnings]
 
     [Author and credits]
     """
 
-    # A list of docker images required by the module.
-    images = [
-        "ubuntu:latest"
-    ]
-
     def usage(self) -> object:
         """
-        Configure an ArgumentParser object with options relevant to the module.
+        Configure an ArgumentParser object with options relevant
+        to the module.
 
         :return: ArgumentParser object
         """
@@ -35,17 +33,17 @@ class MyDockerModule(DockerExtension, Module):
 
         return parser
 
+    @DockerExtension.ImageDecorator(["ubuntu:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
         Module.do updates self.options with options.
 
-        DockerExtension.do prepares required docker images.
-
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
-        :return: Generator containing results of module execution, in bytes
+        :return: Generator containing results of module execution,
+            in bytes
         """
         super().do(data, options)
 
@@ -67,7 +65,8 @@ class MyDockerModule(DockerExtension, Module):
         cmd = "cp /data/in /data/out"
 
         # Prepare input and output files
-        with self.IO(data, infile="/data/in", outfile="/data/out") as io:
+        with self.IO(data,
+            infile="/data/in", outfile="/data/out") as io:
 
             # Prepare container with input file and output file
             # mounted as volumes
@@ -78,7 +77,8 @@ class MyDockerModule(DockerExtension, Module):
                 command=cmd) as container:
 
                 # Handle container stdout and stderr
-                for line in container.logs(stdout=True, stderr=True):
+                for line in container.logs(
+                    stdout=True, stderr=True):
                     self.info(line.strip().decode(), decorate=False)
 
                 # Handle data written to output file

@@ -41,13 +41,6 @@ Modules
 .. autoclass:: %s.%s
 """ % (label, mod.__class__.__name__)
 
-                # Docker-Specific
-                if isinstance(mod, DockerExtension):
-
-                    yield """
-   Docker images: %s
-""" % (pprint.pformat(mod.images))
-
                 # Usage
                 yield """
 .. code-block:: bash

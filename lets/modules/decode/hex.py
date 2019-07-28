@@ -2,6 +2,7 @@ from lets.module import Module
 
 import binascii
 
+
 class Hex(Module):
     """
     Hex decode a string of bytes.

@@ -8,11 +8,6 @@ class Lookup(DockerExtension, Module):
     Perform an address lookup for a domain.
     """
 
-    # A list of docker images required by the module.
-    images = [
-        "local/kali/dnsrecon:latest"
-    ]
-
     def usage(self) -> object:
         """
         Configure an ArgumentParser object with options relevant to the module.
@@ -34,13 +29,12 @@ class Lookup(DockerExtension, Module):
 
         return parser
 
+    @DockerExtension.ImageDecorator(["local/kali/dnsrecon:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
 
         Module.do updates self.options with options.
-
-        DockerExtension.do prepares required docker images.
 
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
@@ -69,9 +63,8 @@ class Lookup(DockerExtension, Module):
 
             container.wait()
 
+    @DockerExtension.ImageDecorator(["local/kali/dnsrecon:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Verify required docker images can be produced
-        self._prep()

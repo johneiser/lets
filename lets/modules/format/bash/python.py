@@ -2,13 +2,12 @@ from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
 # Imports required to execute this module
-import zlib, base64, string
+import base64, string
 
 
-class Compress(DockerExtension, Module):
+class Python(DockerExtension, Module):
     """
-    Compress and Base64 encode a python script and prepend a
-    decode/decompress stub.
+    Format a bash command into python code.
     """
 
     def usage(self) -> object:
@@ -18,6 +17,12 @@ class Compress(DockerExtension, Module):
         :return: ArgumentParser object
         """
         parser = super().usage()
+
+        # Customize shell
+        parser.add_argument("-s", "--shell",
+            help="use the specified shell",
+            type=str,
+            default="/bin/bash")
 
         return parser
 
@@ -39,15 +44,12 @@ class Compress(DockerExtension, Module):
         except AssertionError as e:
             self.throw(e)
 
-        # Compress command
-        compressed = zlib.compress(data, level=9)
-
         # Encode command
-        encoded = base64.b64encode(compressed)
+        encoded = base64.b64encode(data)
         self.options["encoded"] = encoded.decode()
         
         # Place encoded command in harness
-        cmd = "import base64,sys,zlib;exec(zlib.decompress(base64.b64decode({2:str,3:lambda b:bytes(b,'UTF-8')}[sys.version_info[0]]('%(encoded)s'))))" % self.options
+        cmd = "import sys,base64,subprocess as s;s.Popen(['%(shell)s','-c',base64.b64decode('%(encoded)s')]).communicate()" % self.options
 
         # Convert harness to bytes and return
         yield cmd.encode()
@@ -58,14 +60,14 @@ class Compress(DockerExtension, Module):
         Perform unit tests to verify this module's functionality.
         """
         # Test encoding
-        # self.assertTrue(
-        #     b"eNoBAAH//gABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v+t9n+B" in 
-        #     b"".join(self.do(bytes(range(0, 256)))),
-        #     "All bytes produced innacurate results")
+        self.assertTrue(
+            b"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w==" in 
+            b"".join(self.do(bytes(range(0, 256)))),
+            "All bytes produced innacurate results")
 
         # Test execution
         test = string.ascii_letters + string.digits
-        testcmd = "print('%s')" % test
+        testcmd = "echo '%s'" % test
         encoded = b"".join(self.do(testcmd.encode()))
         cmd = "python -c \"%s\"" % encoded.decode()
 
@@ -96,3 +98,4 @@ class Compress(DockerExtension, Module):
 
             # Verify execution was successful
             self.assertEqual(output.decode(), test, "Version 3 execution produced inaccurate results")
+            

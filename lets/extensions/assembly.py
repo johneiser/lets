@@ -1,12 +1,12 @@
-import os, sys, argparse, pprint, docker, logging, tempfile
-
 from lets.extensions.docker import DockerExtension
 
-class AssemblyExtension(DockerExtension, object):
+
+class AssemblyExtension(DockerExtension):
     """
     Extend a module with specific utilities for assembling code.
     """
 
+    @DockerExtension.ImageDecorator(["local/tools/keystone:latest"])
     def assemble(self, code:str, arch:str, mode:str) -> bytes:
         """
         Assemble the provided code according to the specified architecture.
@@ -42,21 +42,12 @@ class AssemblyExtension(DockerExtension, object):
                 container.wait()
                 return io.outfile.read()
 
-    def _prep(self):
-        """
-        Prepare all required docker images.
-        """
-        # Ensure keystone image is prepared
-        if not "local/tools/keystone" in [i.split(":")[0] for i in self.images]:
-            self.images.append("local/tools/keystone:latest")
-
-        super()._prep()
-
-class DisassemblyExtension(DockerExtension, object):
+class DisassemblyExtension(DockerExtension):
     """
     Extend a module with specific utilities for disassembling code.
     """
 
+    @DockerExtension.ImageDecorator(["local/tools/capstone:latest"])
     def disassemble(self, data:bytes, arch:str, mode:str) -> str:
         """
         Disassemble the provided code according to the specified architecture.
@@ -88,13 +79,3 @@ class DisassemblyExtension(DockerExtension, object):
                 # Handle data written to output file
                 container.wait()
                 return io.outfile.read()
-
-    def _prep(self):
-        """
-        Prepare all required docker images.
-        """
-        # Ensure capstone image is prepared
-        if not "local/tools/capstone" in [i.split(":")[0] for i in self.images]:
-            self.images.append("local/tools/capstone:latest")
-
-        super()._prep()

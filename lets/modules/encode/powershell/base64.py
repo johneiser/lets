@@ -4,15 +4,11 @@ from lets.extensions.docker import DockerExtension
 # Imports required to execute this module
 import base64, string
 
+
 class Base64(DockerExtension, Module):
     """
     Base64 encode a powershell script and prepend a decode stub.
     """
-
-    # A list of docker images required by the module.
-    images = [
-        "mcr.microsoft.com/powershell:latest"
-    ]
 
     def usage(self) -> object:
         """
@@ -30,13 +26,11 @@ class Base64(DockerExtension, Module):
 
         Module.do updates self.options with options.
 
-        DockerExtension.do prepares required docker images.
-
         :param data: Data to be used by module, in bytes
         :param options: Dict of options to be used by module
         :return: Generator containing results of module execution, in bytes
         """
-        super().do(data, options, prep=False)
+        super().do(data, options)
 
         # Validate input
         try:
@@ -54,6 +48,7 @@ class Base64(DockerExtension, Module):
         # Convert harness to bytes and return
         yield cmd.encode()
 
+    @DockerExtension.ImageDecorator(["mcr.microsoft.com/powershell:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
