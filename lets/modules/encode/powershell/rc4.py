@@ -115,12 +115,13 @@ class RC4(DockerExtension, Module):
         test = string.ascii_letters + string.digits
         testcmd = "Write-Output '%s'" % test
         encoded = b"".join(self.do(testcmd.encode()))
-        cmd = "pwsh -c \"%s\"" % encoded.decode()
+        cmd = encoded.decode()
 
         with self.Container(
             image="mcr.microsoft.com/powershell:latest",
             network_disabled=True,
-            command=cmd) as container:
+            entrypoint=["pwsh", "-c"],
+            command=[cmd]) as container:
 
             # Fetch output
             output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]

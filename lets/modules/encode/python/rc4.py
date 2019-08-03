@@ -125,12 +125,13 @@ for b in d:
         test = string.ascii_letters + string.digits
         testcmd = "print('%s')" % test
         encoded = b"".join(self.do(testcmd.encode()))
-        cmd = "python -c \"%s\"" % encoded.decode()
+        cmd = encoded.decode()
 
         with self.Container(
             image="python:2",
             network_disabled=True,
-            command=cmd) as container:
+            entrypoint=["python", "-c"],
+            command=[cmd]) as container:
 
             # Fetch output
             output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]
@@ -144,7 +145,8 @@ for b in d:
         with self.Container(
             image="python:3",
             network_disabled=True,
-            command=cmd) as container:
+            entrypoint=["python", "-c"],
+            command=[cmd]) as container:
 
             # Fetch output
             output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]

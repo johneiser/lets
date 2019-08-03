@@ -2,6 +2,17 @@
 Changelog
 =========
 
+0.2.2
+^^^^^
+
+August 3, 2019
+
+- Removed codecov
+- Added images: local/tools/invoke-obfuscation, local/linux/sslscan
+- Added modules: encode/powershell/obfuscate/*, format/powershell/obfuscate/*, scan/ssl/config
+- Improved testing on various encode and format modules
+- Simplified commands various docker modules with 'entrypoint'
+
 0.2.1
 ^^^^^
 

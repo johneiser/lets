@@ -2,9 +2,9 @@ from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
 
-class Version(DockerExtension, Module):
+class Config(DockerExtension, Module):
     """
-    Scan an HTTP server to determine the software versions it uses.
+    Scan an SSL/TLS endpoint to determine its configuration.
     """
 
     def usage(self) -> object:
@@ -17,18 +17,12 @@ class Version(DockerExtension, Module):
 
         # Specify target
         parser.add_argument("target",
-            help="http server",
+            help="ssl/tls server",
             type=str)
-
-        # Customize HTTP requests
-        parser.add_argument("-u", "--useragent",
-            help="useragent to use in http requests",
-            type=str,
-            default="Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C)")
 
         return parser
 
-    @DockerExtension.ImageDecorator(["local/kali/whatweb:latest"])
+    @DockerExtension.ImageDecorator(["local/linux/sslscan:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
@@ -48,12 +42,12 @@ class Version(DockerExtension, Module):
             self.throw(e)
 
         # Build command
-        cmd = "whatweb -a3 --user-agent '%(useragent)s' %(target)s" % self.options
+        cmd = "sslscan %(target)s" % self.options
 
         # Prepare container with input file and output file
         # mounted as volumes
         with self.Container(
-            image="local/kali/whatweb:latest",
+            image="local/linux/sslscan:latest",
             command=cmd) as container:
 
             # Handle container stdout and stderr
@@ -62,7 +56,7 @@ class Version(DockerExtension, Module):
 
             container.wait()
 
-    @DockerExtension.ImageDecorator(["local/kali/whatweb:latest"])
+    @DockerExtension.ImageDecorator(["local/linux/sslscan:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.

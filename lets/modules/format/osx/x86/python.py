@@ -1,7 +1,7 @@
 from lets.module import Module
 
 # Imports required to execute this module
-import base64
+import base64, unittest
 
 
 class Python(Module):
@@ -70,6 +70,7 @@ class Python(Module):
         # Convert harness to bytes and return
         yield cmd.encode()
 
+    @unittest.skip("Cannot test osx shellcode with docker")
     def test(self):
         """
         Perform unit tests to verify this module's functionality.

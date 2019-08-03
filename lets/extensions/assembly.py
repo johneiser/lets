@@ -52,7 +52,7 @@ class DisassemblyExtension(DockerExtension):
         """
         Disassemble the provided code according to the specified architecture.
 
-        :param code: Data to be disassembled, as bytes
+        :param data: Data to be disassembled, as bytes
         :param arch: Architecture for which to disassemble
         :param mode: Mode with which the architecture operates
         :return: Disassembled code, as str

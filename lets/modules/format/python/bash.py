@@ -67,6 +67,7 @@ class Bash(DockerExtension, Module):
         # Convert harness to bytes and return
         yield cmd.encode()
 
+    @DockerExtension.ImageDecorator(["python:2", "python:3"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
@@ -77,5 +78,39 @@ class Bash(DockerExtension, Module):
             b"".join(self.do(bytes(range(0, 256)))),
             "All bytes produced innacurate results")
 
-        # Test execution (TODO)
+        # Test execution
+        test = string.ascii_letters + string.digits
+        testcmd = "print('%s')" % test
+        encoded = b"".join(self.do(testcmd.encode()))
+        cmd = encoded.decode()
+
+        with self.Container(
+            image="python:2",
+            network_disabled=True,
+            entrypoint=["bash", "-c"],
+            command=[cmd]) as container:
+
+            # Fetch output
+            output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]
+
+            # Wait for container to cleanup
+            container.wait()
+
+            # Verify execution was successful
+            self.assertEqual(output.decode(), test, "Version 2 execution produced inaccurate results")
+
+        with self.Container(
+            image="python:3",
+            network_disabled=True,
+            entrypoint=["bash", "-c"],
+            command=[cmd]) as container:
+
+            # Fetch output
+            output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]
+
+            # Wait for container to cleanup
+            container.wait()
+
+            # Verify execution was successful
+            self.assertEqual(output.decode(), test, "Version 3 execution produced inaccurate results")
             

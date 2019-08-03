@@ -24,11 +24,7 @@ before_install:
 install:
   - pip install --upgrade pip
   - pip install -r requirements.txt
-  - pip install codecov
 
 script:
   - python test.py
   - python lets/api/manage.py test rest
-
-after_success:
-  - codecov

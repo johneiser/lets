@@ -86,12 +86,13 @@ class Compress(DockerExtension, Module):
         test = string.ascii_letters + string.digits
         testcmd = "echo '%s'" % test
         encoded = b"".join(self.do(testcmd.encode()))
-        cmd = "bash -c \"%s\"" % encoded.decode()
+        cmd = encoded.decode()
 
         with self.Container(
             image="debian:latest",
             network_disabled=True,
-            command=cmd) as container:
+            entrypoint=["bash", "-c"],
+            command=[cmd]) as container:
 
             # Fetch output
             output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]

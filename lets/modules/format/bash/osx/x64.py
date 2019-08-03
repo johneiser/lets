@@ -7,7 +7,7 @@ import string
 
 class X64(AssemblyExtension, Module):
     """
-    Format a bash command into OSX x86_64 assembly code.
+    Format a bash command into OSX x86_64 shellcode.
     """
 
     def usage(self) -> object:
