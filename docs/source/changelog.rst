@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.2.3
+^^^^^
+
+August 4, 2019
+
+- Added modules: launch/scanner/openvas
+
 0.2.2
 ^^^^^
 
