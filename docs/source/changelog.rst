@@ -2,6 +2,16 @@
 Changelog
 =========
 
+0.2.4
+^^^^^
+
+August 11, 2019
+
+- Added modules: assert/hash, calculate/hash
+- Added modules: scan/dns/subdomains, scan/http/directories
+- Added images: local/kali/gobuster
+- Refactored powershell obfuscation modules
+
 0.2.3
 ^^^^^
 

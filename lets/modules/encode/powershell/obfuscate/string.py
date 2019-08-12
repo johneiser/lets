@@ -7,13 +7,9 @@ import base64, string, re
 
 class String(DockerExtension, Module):
     """
-    Obfuscate a powershell script with string-based manipulation.
+    Obfuscate a powershell script by concatenating the entire
+    command.
     """
-    TECHNIQUES = [
-        "1",    # Concatenate entire command
-        "2",    # Reorder entire command after concatenating
-        "3",    # Reverse entire command after concatenating
-    ]
 
     def usage(self) -> object:
         """
@@ -23,13 +19,6 @@ class String(DockerExtension, Module):
         :return: ArgumentParser object
         """
         parser = super().usage()
-
-        # Specify technique
-        parser.add_argument("-t", "--technique",
-            help="technique to use in obfuscation",
-            type=str,
-            choices=self.TECHNIQUES,
-            default="1")
 
         return parser
 
@@ -50,13 +39,11 @@ class String(DockerExtension, Module):
         # Validate input
         try:
             assert data, "Expecting data"
-            technique = self.options.get("technique")
-            assert technique in self.TECHNIQUES, "Invalid technique: %s (%s)" % (technique, str(self.TECHNIQUES))
         except AssertionError as e:
             self.throw(e)
 
         # Build command
-        cmd = "Invoke-Obfuscation -Quiet -ScriptPath /data/in -Command 'STRING,%(technique)s' | Out-File /data/out" % self.options
+        cmd = "Invoke-Obfuscation -Quiet -ScriptPath /data/in -Command 'STRING,1' | Out-File /data/out" % self.options
 
         # Prepare input and output files
         with self.IO(data,
@@ -86,47 +73,46 @@ class String(DockerExtension, Module):
         Perform unit tests to verify this module's functionality.
         """
         # Test encoding
-        for technique in self.TECHNIQUES:
-            test = string.ascii_letters + string.digits
-            testcmd = "Write-Output '%s'" % test
-            encoded = b"".join(self.do(testcmd.encode(), {"technique" : technique}))
-            self.assertTrue(len(encoded) > 0, "Technique %s produced inaccurate results" % technique)
+        test = string.ascii_letters + string.digits
+        testcmd = "Write-Output '%s'" % test
+        encoded = b"".join(self.do(testcmd.encode()))
+        self.assertTrue(len(encoded) > 0, "Encoding printable characters produced inaccurate results")
 
-            # Skip execution: unstable, too many missing variables in docker container
-            continue
+        # Skip execution: unstable, too many missing variables in docker container
+        return
 
-            # Try to evade errors with missing variables
+        # Try to evade errors with missing variables
+        compare = encoded.decode().lower()
+        while (
+            "pshome" in compare or
+            "emohsp" in compare or
+            "comspec" in compare or
+            "cepsmoc" in compare or
+            "shellid" in compare or
+            "dillehs" in compare or
+            "verbosepreference" in compare or
+            "ecnereferpesobrev" in compare or
+            "mdr" in compare or
+            "rdm" in compare
+            ):
+            encoded = b"".join(self.do(testcmd.encode()))
             compare = encoded.decode().lower()
-            while (
-                "pshome" in compare or
-                "emohsp" in compare or
-                "comspec" in compare or
-                "cepsmoc" in compare or
-                "shellid" in compare or
-                "dillehs" in compare or
-                "verbosepreference" in compare or
-                "ecnereferpesobrev" in compare or
-                "mdr" in compare or
-                "rdm" in compare
-                ):
-                encoded = b"".join(self.do(testcmd.encode(), {"technique" : technique}))
-                compare = encoded.decode().lower()
 
-            # Base64 encode to get past the container layer
-            cmd = base64.b64encode(encoded.decode().encode("utf-16-le")).decode()
+        # Base64 encode to get past the container layer
+        cmd = base64.b64encode(encoded.decode().encode("utf-16-le")).decode()
 
-            # Test execution
-            with self.Container(
-                image="local/tools/invoke-obfuscation:latest",
-                network_disabled=True,
-                entrypoint=["pwsh", "-e"],
-                command=[cmd]) as container:
+        # Test execution
+        with self.Container(
+            image="local/tools/invoke-obfuscation:latest",
+            network_disabled=True,
+            entrypoint=["pwsh", "-e"],
+            command=[cmd]) as container:
 
-                # Fetch output
-                output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]
+            # Fetch output
+            output = [line.strip() for line in container.logs(stdout=True, stderr=True)][0]
 
-                # Wait for container to cleanup
-                container.wait()
+            # Wait for container to cleanup
+            container.wait()
 
-                # Verify execution was successful
-                self.assertEqual(output.decode(), test, "Execution of technique %s produced inaccurate results" % technique)
+            # Verify execution was successful
+            self.assertEqual(output.decode(), test, "Execution produced inaccurate results")

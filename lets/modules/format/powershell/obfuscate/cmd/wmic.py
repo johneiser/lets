@@ -35,14 +35,14 @@ class Wmic(DockerExtension, Module):
             help="flag index to pass to powershell executable",
             dest="flag_indicies",
             type=int,
-            choices=range(0,len(self.FLAGS)),
+            choices=range(1,len(self.FLAGS)),
             action="append",
             default=[])
         parser.add_argument("--flag",
             dest="flag_names",
             help="flag name to pass to powershell executable",
             type=str,
-            choices=self.FLAGS,
+            choices=self.FLAGS[1:],
             action="append",
             default=[])
 
@@ -71,7 +71,7 @@ class Wmic(DockerExtension, Module):
         # Build command
         flags = "".join(["%d" % f for f in self.options.get("flag_indicies")])
         flags += "".join(["%d" % self.FLAGS.index(f) for f in self.options.get("flag_names")])
-        cmd = "Invoke-Obfuscation -Quiet -ScriptPath /data/in -Command 'LAUNCHER,WMIC,%s' | Out-File /data/out" % flags
+        cmd = "Invoke-Obfuscation -Quiet -ScriptPath /data/in -Command 'LAUNCHER,WMIC,%s' | Out-File /data/out" % (flags if flags else "0")
         
         # Prepare input and output files
         with self.IO(data,
