@@ -6,6 +6,7 @@ class Subdomains(DockerExtension, Module):
     """
     Attempt to enumerate subdomains of a domain by brute force.
     """
+    interactive = True
 
     def usage(self) -> object:
         """

@@ -53,7 +53,7 @@ class RC4(DockerExtension, Module):
             key = os.urandom(32)
 
         # Compress command
-        compressed = zlib.compress(data, level=9)
+        compressed = zlib.compress(data, 9)
 
         # Encrypt command
         encrypted = ARC4.new(key).encrypt(compressed)

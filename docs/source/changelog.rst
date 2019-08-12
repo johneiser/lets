@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.2.5
+^^^^^
+
+August 12, 2019
+
+- Labeled additional modules that won't work with api as interactive
+- Restored zlib compatibility with Python 3.5
+
 0.2.4
 ^^^^^
 

@@ -6,6 +6,7 @@ class Directories(DockerExtension, Module):
     """
     Attempt to enumerate directories on an HTTP server by brute force.
     """
+    interactive = True
 
     def usage(self) -> object:
         """

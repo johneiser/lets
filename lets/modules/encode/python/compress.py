@@ -40,7 +40,7 @@ class Compress(DockerExtension, Module):
             self.throw(e)
 
         # Compress command
-        compressed = zlib.compress(data, level=9)
+        compressed = zlib.compress(data, 9)
 
         # Encode command
         encoded = base64.b64encode(compressed)
