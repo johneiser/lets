@@ -25,7 +25,7 @@ class Metasploit(DockerExtension, Module):
 
         # Share directories with container, if desired
         parser.add_argument("-d", "--directory",
-            help="directory to share with container",
+            help="share directory with container",
             type=str,
             action="append",
             dest="directories",
@@ -51,7 +51,9 @@ class Metasploit(DockerExtension, Module):
 
         return parser
 
-    @DockerExtension.ImageDecorator(["metasploitframework/metasploit-framework:latest"])
+    @DockerExtension.ImageDecorator([
+        "postgres:latest",
+        "metasploitframework/metasploit-framework:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
@@ -86,7 +88,7 @@ class Metasploit(DockerExtension, Module):
         with self.Container(
             image="postgres:latest",
             ports={
-                "5432/tcp" : ("127.0.0.1", self.options.get("port")),
+                "5432/tcp" : (self.options.get("interface"), self.options.get("port")),
             },
             environment={
                 "POSTGRES_USER" : self.options.get("user"),
