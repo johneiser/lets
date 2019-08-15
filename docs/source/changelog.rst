@@ -2,6 +2,18 @@
 Changelog
 =========
 
+0.2.6
+^^^^^
+
+August 14, 2019
+
+- Added modules: listen/serve/http
+- Added modules: launch/c2/metasploit, generate/payload/msfvenom
+- Added workflow: combined_windows_messagebox.py
+- Replaced local/kali/metasploit image with metasploitframework/metasploit-framework:latest
+- Added help(path), list(), and exists(path) to python api
+- Removed more powershell tests breaking due to missing variables in docker container
+
 0.2.5
 ^^^^^
 

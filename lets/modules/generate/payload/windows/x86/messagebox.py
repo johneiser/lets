@@ -47,7 +47,7 @@ class Messagebox(DockerExtension, Module):
 
         return parser
 
-    @DockerExtension.ImageDecorator(["local/kali/metasploit:latest"])
+    @DockerExtension.ImageDecorator(["metasploitframework/metasploit-framework:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
@@ -61,7 +61,7 @@ class Messagebox(DockerExtension, Module):
         super().do(data, options)
 
         # Build core msfvenom command
-        cmd = "msfvenom -a x86 --platform windows -p windows/messagebox -f raw -o /data/out"
+        cmd = "-a x86 --platform windows -p windows/messagebox -f raw -o /data/out"
 
         # Adjust command with options
         try:
@@ -83,9 +83,10 @@ class Messagebox(DockerExtension, Module):
 
             # Prepare container with output file mounted as volume
             with self.Container(
-                image="local/kali/metasploit:latest",
+                image="metasploitframework/metasploit-framework:latest",
                 network_disabled=True,
                 volumes=io.volumes,
+                entrypoint="/usr/src/metasploit-framework/msfvenom",
                 command=cmd) as container:
 
                 # Handle container stdout and stderr
@@ -96,7 +97,7 @@ class Messagebox(DockerExtension, Module):
                 container.wait()
                 yield io.outfile.read()
 
-    @DockerExtension.ImageDecorator(["local/kali/metasploit:latest"])
+    @DockerExtension.ImageDecorator(["metasploitframework/metasploit-framework:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
