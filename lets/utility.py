@@ -1,6 +1,8 @@
 import os
 
-TEMP_DIRECTORY = "/tmp"
+TEMP_DIRECTORY_DEFAULT = "/tmp"
+TEMP_DIRECTORY = os.path.abspath(os.environ.get("LETS_WORKDIR", TEMP_DIRECTORY_DEFAULT))
+DEBUG = os.environ.get("LETS_DEBUG") is not None
 
 
 class Utility(object):

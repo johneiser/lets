@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.2.7
+^^^^^
+
+August 16, 2019
+
+- Added 'confirm' option to warning and error logs
+- Added environment-variable customization capability and documentation 
+
 0.2.6
 ^^^^^
 

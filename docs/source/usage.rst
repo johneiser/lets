@@ -58,4 +58,24 @@ REST API
 .. literalinclude:: ../../workflows/sample_api.sh
    :language: bash
 
+=============
+Customization
+=============
+
+If your environment requires customization, **lets** exposes a number of variables to the environment.
+
+.. list-table:: Environment variables
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Key
+     - Default Value
+     - Purpose
+   * - LETS_WORKDIR
+     - /tmp
+     - Defines where **lets** will place temporary files, often used to mount content into docker containers. You may want to specify a disk-based directory if dealing with large content.
+   * - LETS_DEBUG
+     - False
+     - Signals **lets** to always print extra information, as if '-v' had been passed to every module.
+
 Browse the *lets/modules* folder, use bash autocomplete, or check out :doc:`modules` to see what modules are available.  If you're interested in building your own modules and contributing to the framework, refer to :doc:`development`.
