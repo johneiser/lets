@@ -2,6 +2,14 @@
 Changelog
 =========
 
+1.0.1
+^^^^^
+
+August 17, 2019
+
+- Changed sslscan base image from debian to kali
+- Removed bash coloring from README.md, again
+
 1.0.0
 ^^^^^
 

@@ -25,20 +25,20 @@ To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/i
 
 Install [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>).  Make sure to log out and back in for this to take effect.
 
-```bash
+```
 $ curl -fsSL https://get.docker.com | sudo sh
 $ sudo usermod -aG docker $USER
 ```
 
 Install **lets**.
 
-```bash
+```
 $ pip3 install docker-lets
 ```
 
 Activate **lets** *tab-completion* for bash.
 
-```bash
+```
 $ lets generate/support/completion/bash >> ~/.profile
 $ source ~/.profile
 ```
@@ -47,7 +47,7 @@ $ source ~/.profile
 
 Quickstart:
 
-```bash
+```
 $ echo SGVsbG8gd29ybGQhCg== | lets decode/base64
 Hello world!
 ```
