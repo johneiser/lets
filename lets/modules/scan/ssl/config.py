@@ -22,7 +22,7 @@ class Config(DockerExtension, Module):
 
         return parser
 
-    @DockerExtension.ImageDecorator(["local/linux/sslscan:latest"])
+    @DockerExtension.ImageDecorator(["local/kali/sslscan:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
@@ -47,7 +47,7 @@ class Config(DockerExtension, Module):
         # Prepare container with input file and output file
         # mounted as volumes
         with self.Container(
-            image="local/linux/sslscan:latest",
+            image="local/kali/sslscan:latest",
             command=cmd) as container:
 
             # Handle container stdout and stderr
@@ -56,7 +56,7 @@ class Config(DockerExtension, Module):
 
             container.wait()
 
-    @DockerExtension.ImageDecorator(["local/linux/sslscan:latest"])
+    @DockerExtension.ImageDecorator(["local/kali/sslscan:latest"])
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
