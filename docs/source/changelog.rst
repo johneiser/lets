@@ -2,6 +2,28 @@
 Changelog
 =========
 
+1.0.0
+^^^^^
+
+August 17, 2019
+
+- Added modules: generate/support/completion/bash, listen/serve/lets/http (api)
+- Moved default temporary directory from /tmp to <package>/data
+- Added LETS_NOCACHE environment variable
+- Split listen/serve/database/postgres from launch/c2/metasploit module
+- Added resource files and commands as input to launch/c2/metasploit module
+- Removed encrypt/rc4 module, key usage too unclear
+- Modules can now limit the platforms on which they should be made available
+- Docker extensions now check for docker and warn of its absence
+- Docker ResourceWarning "unclosed" errors are now ignored during unit tests
+- Extended 'confirm' log option to info
+- Removed contenttpes app from api
+- Changed lets.list() to produce a generator
+- Moved main functionality to lets.__main__
+- Moved test functionality to lets.__test__
+- Added setup.py and MANIFEST.in for pip installation
+- Updated documenation and workflows to match new pip installation
+
 0.2.7
 ^^^^^
 
