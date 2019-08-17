@@ -34,11 +34,13 @@ def help(path:str) -> str:
 
 def list() -> list:
     """
-    Produce a list of available modules.
+    Generate a list of available modules.
 
-    :return: List of available modules
+    :return: generator of available modules
     """
-    return [mod.replace(".", "/") for mod in module.Module.identify_all()]
+    for mod in module.Module.identify_all():
+        [_,_,m] = mod.partition("lets.modules.")
+        yield m.replace(".", "/")
 
 def exists(path:str) -> str:
     """

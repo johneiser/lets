@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
-import os, sys, argparse, logging, unittest, subprocess
+import os, sys, argparse, logging, unittest, subprocess, warnings
 import lets
+from lets.module import Module
+
 
 class BashInterfaceTest(unittest.TestCase):
     """
@@ -12,7 +13,7 @@ class BashInterfaceTest(unittest.TestCase):
         """
         Perform unit tests to verify the bash interface functionality.
         """
-        _lets = os.path.sep.join([os.path.abspath(os.path.dirname(__file__)), "lets.py"])
+        _lets = os.path.sep.join([os.path.abspath(os.path.dirname(__file__)), "..", "lets.py"])
 
         p = subprocess.Popen(["python3", _lets, "encode/base64"],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -45,41 +46,49 @@ class PythonInterfaceTest(unittest.TestCase):
             "Base64 encoding produced inaccurate generator")
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Lets-Test :: Testing A Modular Framework for Arbitrary Action",
-        usage="%(prog)s [module]"
-        )
-    parser.add_argument("module", metavar="module", type=str, help="module to use", nargs="?")
-    args = parser.parse_args()
+def test_suite(module:str=None):
+    """
+    Retrieve tests present in the framework.
+
+    :param module: Specify a single test to be retrieved
+    :return: TestSuite containing test(s)
+    """
 
     # Initialize test suite
     suite = unittest.TestSuite()
 
-    if args.module:
+    if module:
         try:
             # Build module and add test
-            mod = lets.module.Module.build(args.module)
-            if mod and hasattr(mod, lets.module.Module.test_method):
+            mod = Module.build(module)
+            if mod and hasattr(mod, Module.test_method):
                 suite.addTest(mod)
             else:
-                raise(lets.module.Module.Exception("Error loading module: %s" % args.module))
-        except lets.module.Module.Exception as e:
+                raise(Module.Exception("Error loading module: %s" % module))
+        except Module.Exception as e:
             logging.error("[!] %s" % (str(e)))
 
     else:
         # Add interface tests
-        suite.addTest(BashInterfaceTest(lets.module.Module.test_method))
-        suite.addTest(PythonInterfaceTest(lets.module.Module.test_method))
+        suite.addTest(BashInterfaceTest(Module.test_method))
+        suite.addTest(PythonInterfaceTest(Module.test_method))
 
         try:
             # Walk modules and add tests
-            for mod in lets.module.Module.build_all():
-                if mod and hasattr(mod, lets.module.Module.test_method):
+            for mod in Module.build_all():
+                if mod and hasattr(mod, Module.test_method):
                     suite.addTest(mod)
-        except lets.module.Module.Exception as e:
+        except Module.Exception as e:
             logging.error("[!] %s" % (str(e)))
 
+    return suite
+
+def test(module:str=None):
+    """
+    Perform tests present in the framework.
+
+    :param module: Specify a single test to be run   
+    """
     # Execute test suite
     runner = unittest.TextTestRunner()
-    runner.run(suite)
+    runner.run(test_suite(module))

@@ -15,6 +15,12 @@ class MyModule(Module):
     [Author and credits]
     """
 
+    # Limit api access, if necessary
+    interactive = False
+
+    # Limit platform, if necessary
+    platforms = ["linux", "win32", "cygwin", "darwin"]
+
     def usage(self) -> object:
         """
         Configure an ArgumentParser object with options relevant
@@ -24,7 +30,7 @@ class MyModule(Module):
         """
         parser = super().usage()
 
-        # Enable convert before encode
+        # (Example) Enable convert before encode
         parser.add_argument("-u", "--upper",
             help="convert to uppercase before encoding",
             action="store_true",
@@ -51,7 +57,7 @@ class MyModule(Module):
         except AssertionError as e:
             self.throw(e)
 
-        # Convert, if necessary
+        # (Example) Convert, if necessary
         if self.options.get("upper"):
             try:
                 self.info("Converting to uppercase")
@@ -59,20 +65,20 @@ class MyModule(Module):
             except UnicodeDecodeError as e:
                 self.throw(e)
 
-        # Encode
+        # (Example) Encode
         yield base64.b64encode(data)
 
     def test(self):
         """
         Perform unit tests to verify this module's functionality.
         """
-        # Test generic
+        # (Example) Test generic
         self.assertEqual(
             b"".join(self.do(b"abcd", {"upper" : False})),
             b"YWJjZA==",
             "Defaults produced inaccurate results")
 
-        # Test with uppercase conversion
+        # (Example) Test with uppercase conversion
         self.assertEqual(
             b"".join(self.do(b"abcd", {"upper" : True})),
             b"QUJDRA==",

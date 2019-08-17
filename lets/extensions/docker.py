@@ -1,7 +1,7 @@
 from lets.extension import Extension
 from lets.logger import Logger
 from lets.utility import Utility, TEMP_DIRECTORY
-import os, sys, docker, tempfile, subprocess, functools
+import os, sys, docker, tempfile, subprocess, functools, warnings
 
 
 class DockerExtension(Extension, object):
@@ -10,11 +10,15 @@ class DockerExtension(Extension, object):
     docker containers.
     """
 
-    @property
-    def client(self) -> object:
-        if not (hasattr(self, "_client") and self._client):
-            self._client = docker.from_env()
-        return self._client
+    def setUp(self):
+        """
+        Make any necessary preparations for test.
+        """
+        super().setUp()
+
+        # Ignore resource warnings, normal docker stuff
+        warnings.filterwarnings(action="ignore", message="unclosed", 
+                         category=ResourceWarning)
 
     class IO(object):
         """
@@ -203,6 +207,13 @@ class DockerExtension(Extension, object):
         def client(self) -> object:
             if not (hasattr(self, "_client") and self._client):
                 self._client = docker.from_env()
+
+                # Confirm docker is installed
+                try:
+                    self._client.ping()
+                except Exception as e:
+                    self.throw(e.__class__("Unable to connect to docker, is it installed?"))
+
             return self._client
 
         def prep(self, images:list):

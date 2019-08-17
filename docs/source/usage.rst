@@ -8,27 +8,39 @@ Usage
 Bash Terminal
 =============
 
-In a bash terminal, use ``source lets/bin/activate`` to enter the **lets virtual environment** and enable *tab-completion* of modules.
+**lets** general help can be viewed with the '-h' flag.
 
 .. code-block:: bash
 
-   $ source lets/bin/activate
-   (lets) $ echo -n "abcd" \
+   $ lets -h
+   usage: [input] | lets [-h] <module> [options]
+
+**lets** module specific help can also be viewed with the '-h' flag.
+
+.. code-block:: bash
+
+   $ lets encode/base64 -h
+   usage: base64 [-h] [-v]
+
+In a bash terminal, modules can be chained together using pipes to produce unique sequences of functionality.  For example, the command below takes a string, base64 encodes it, and base64 decodes it back.
+
+.. code-block:: bash
+
+   $ echo -n "abcd" \
          | lets encode/base64 -v \
-         | lets decode/base64 -v && echo
+         | lets decode/base64 -v
    [+] |Base64| Running module with 4 bytes and options: {'verbose': True}
    [+] |Base64| Running module with 8 bytes and options: {'verbose': True}
    abcd
-   (lets) $ lexit
-   $ 
 
-Every module has a verbose flag available by default.  With the verbose flag set, extra information is logged to stderr in a way that does not interfere with the content being passed from one module to the next.
+
+Every module has a verbose flag available by default. With the verbose flag set, extra information is logged to stderr in a way that does not interfere with the content being passed from one module to the next.
 
 ===========
 Bash Script
 ===========
 
-To save time, sequences of modules that are particularly long or that often run together can be put into a bash script, or *workflow*.
+To save time, sequences of modules that are particularly long or that often run together can be put into a bash script, or *workflow*. Here is the same sequence we saw before:
 
 .. literalinclude:: ../../workflows/sample.sh
    :language: bash
@@ -37,7 +49,7 @@ To save time, sequences of modules that are particularly long or that often run 
 Python
 ======
 
-If a sequence of modules requires a little more attention (like condition handling), a python script can also serve as a workflow.
+If a sequence of modules requires a little more attention (like condition handling), a python script can also serve as a workflow. In place of 'lets' in bash, we have 'lets.do' in python, as well as 'lets.help', 'lets.list', and 'lets.exists'. Use help(lets) in python to find out more.
 
 .. autofunction:: lets.do
 
@@ -52,7 +64,7 @@ REST API
 
 .. code-block:: bash
 
-   $ python lets/api/manage.py runserver 0:8080
+   $ lets listen/serve/lets/http -v -p 8080
    # Listening...
 
 .. literalinclude:: ../../workflows/sample_api.sh
@@ -72,10 +84,13 @@ If your environment requires customization, **lets** exposes a number of variabl
      - Default Value
      - Purpose
    * - LETS_WORKDIR
-     - /tmp
-     - Defines where **lets** will place temporary files, often used to mount content into docker containers. You may want to specify a disk-based directory if dealing with large content.
+     - <package>/data
+     - Defines where **lets** will place temporary files, often used to mount content into docker containers. You may want to customize this when dealing with large content.
    * - LETS_DEBUG
      - False
      - Signals **lets** to always print extra information, as if '-v' had been passed to every module.
+   * - LETS_NOCACHE
+     - False
+     - Configures **lets** to not produce __pycache__/ everywhere, when working with source.
 
-Browse the *lets/modules* folder, use bash autocomplete, or check out :doc:`modules` to see what modules are available.  If you're interested in building your own modules and contributing to the framework, refer to :doc:`development`.
+Browse the *lets/modules* folder, use bash tab-completion, or check out :doc:`modules` to see what modules are available.  If you're interested in building your own modules and contributing to the framework, refer to :doc:`development`.

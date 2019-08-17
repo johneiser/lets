@@ -1,8 +1,6 @@
-import os, sys, argparse, unittest, importlib.util, pprint, logging
-sys.dont_write_bytecode = True
-
 from lets.utility import Utility
 from lets.logger import Logger
+import os, sys, argparse, unittest, importlib.util, pprint, logging
 
 
 class Module(Logger, unittest.TestCase):
@@ -13,12 +11,17 @@ class Module(Logger, unittest.TestCase):
     """
     test_method = "test"
     interactive = False
+    platforms = ["linux", "win32", "cygwin", "darwin"]
 
     def __init__(self):
         """
         Custom constructor to enable proper inheritance from unittest.TestCase.
         """
         super().__init__(self.test_method)
+
+        # Check if module works on the current platform
+        if sys.platform not in self.platforms:
+            self.throw(Exception("Module only available for %s" % str(self.platforms)))
 
         # Establish clean slate for module options
         self.options = {}
@@ -107,6 +110,7 @@ class Module(Logger, unittest.TestCase):
                     if (str(key).lower() == name.lower() and
                         callable(attr) and
                         issubclass(attr, cls)):
+
                         return attr()
 
                 except Exception as e:

@@ -18,43 +18,37 @@ To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/i
 
 ## Requirements
 
-- Linux (tested with Ubuntu 16.04)
 - [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>)
 - Python >= 3.5
 
 ## Install
 
-Install [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>).  Make sure to log out and back in for this to take effect.
+Install [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>).  Make sure to log out and back in for this to take effect.
 
-```
-~ $ curl -fsSL https://get.docker.com | sudo sh
-~ $ sudo usermod -aG docker $USER
-```
-
-Clone this repository.
-
-```
-~ $ git clone https://github.com/johneiser/lets
-~ $ cd lets
-~/lets $ 
+```bash
+$ curl -fsSL https://get.docker.com | sudo sh
+$ sudo usermod -aG docker $USER
 ```
 
-Use *pip* to install the requirements.  It is highly recommended that you use a [python virtual environment](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv).
+Install **lets**.
 
+```bash
+$ pip3 install docker-lets
 ```
-~/lets $ pip install virtualenv
-~/lets $ python -m virtualenv -p python3 venv
-~/lets $ source venv/bin/activate
-(venv) ~/lets $ pip install -r requirements.txt
+
+Activate **lets** *tab-completion* for bash.
+
+```bash
+$ lets generate/support/completion/bash >> ~/.profile
+$ source ~/.profile
 ```
 
 ## Usage
 
 Quickstart:
 
-```
-(venv) ~/lets $ source lets/bin/activate
-(lets) (venv) ~/lets $ echo SGVsbG8gd29ybGQhCg== | lets decode/base64
+```bash
+$ echo SGVsbG8gd29ybGQhCg== | lets decode/base64
 Hello world!
 ```
 

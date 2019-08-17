@@ -10,6 +10,7 @@ HANDLER = logging.StreamHandler(STREAM)
 HANDLER.setLevel(logging.INFO if DEBUG else logging.WARNING)
 LOGGER.addHandler(HANDLER)
 
+
 class Logger(object):
     """
     Logging mixin class, enabling logging functionality across modules.
@@ -40,16 +41,21 @@ class Logger(object):
         """
         raise(self.Exception("|%s| %s: %s" % (self.__class__.__name__, e.__class__.__name__, str(e))))
 
-    def info(self, message:str, decorate:bool=True) -> None:
+    def info(self, message:str, decorate:bool=True, confirm:bool=False) -> None:
         """
         Log an INFO message (only printed with the `verbose` flag set).
 
         :param message: Message to log
         :param decorate: Choose to include decoration
+        :param confirm: Choose to confirm with user before proceeding
         """
         if decorate:
             message = "[+] |%s| %s" % (self.__class__.__name__, message)
+        if confirm:
+            message = "%s [Press Enter to continue]" % message
         logging.info(message)
+        if confirm:
+            input()
 
     def warn(self, message:str, decorate:bool=True, confirm:bool=False) -> None:
         """

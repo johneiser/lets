@@ -1,9 +1,14 @@
-import os
+import os, sys
 
-TEMP_DIRECTORY_DEFAULT = "/tmp"
-TEMP_DIRECTORY = os.path.abspath(os.environ.get("LETS_WORKDIR", TEMP_DIRECTORY_DEFAULT))
+# Environment variables
+TEMP_DIRECTORY = os.path.abspath(os.environ.get("LETS_WORKDIR",
+    os.path.sep.join([os.path.abspath(os.path.dirname(__file__)), "data"])))
+if not os.path.exists(TEMP_DIRECTORY):
+    os.mkdir(TEMP_DIRECTORY)
+
 DEBUG = os.environ.get("LETS_DEBUG") is not None
 
+sys.dont_write_bytecode = os.environ.get("LETS_NOCACHE") is not None
 
 class Utility(object):
     """Class providing generic global utility functions."""

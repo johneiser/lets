@@ -26,5 +26,5 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - python test.py
+  - python setup.py test
   - python lets/api/manage.py test rest

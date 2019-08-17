@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 
-# Find lets
-import os, sys
-sys.path.insert(0, os.path.abspath(os.path.sep.join([os.path.dirname(__file__),".."])))
-
-# Use lets
 import lets
 
 encoded = lets.do("encode/base64",

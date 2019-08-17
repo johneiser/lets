@@ -1,19 +1,20 @@
 from lets.module import Module
 from lets.extensions.docker import DockerExtension
 
-import os
+import os, ipaddress
 
 
 class Metasploit(DockerExtension, Module):
     """
-    Launch a `Metasploit`_ console and its associated postgres database. The
-    database listens on localhost:5432/tcp by default with credentials
-    msf/msf, but can be customized.
+    Launch a `Metasploit`_ console. Optionally connect to a postgres
+    database. Pass resource file contents as stdin, or specify commands
+    to run with '-x'.
 
     .. _Metasploit:
         https://www.offensive-security.com/metasploit-unleashed/
     """
     interactive = True
+    platforms = ["linux"] # Host networking does not work in VM based docker
 
     def usage(self) -> object:
         """
@@ -31,29 +32,36 @@ class Metasploit(DockerExtension, Module):
             dest="directories",
             default=[])
 
-        # Configure database specifics
+        # Execute commands upon load
+        parser.add_argument("-x", "--execute-command",
+            help="execute the specified console commands (use ; for multiples)",
+            type=str,
+            action="append",
+            dest="commands",
+            default=[])
+
+        # Optionally connect to a postgres database
+        parser.add_argument("--database",
+            help="connect to postgres host",
+            type=str,
+            default=None)
         parser.add_argument("--port",
             help="change postgres port (default=%(default)d)",
             type=int,
             default=5432)
-        parser.add_argument("--interface",
-            help="change postgres interface (default=%(default)s)",
-            type=str,
-            default="127.0.0.1")
+        
         parser.add_argument("--user",
             help="change postgres user (default=%(default)s)",
             type=str,
-            default="msf")
+            default="postgres")
         parser.add_argument("--password",
             help="change postgres password (default=%(default)s)",
             type=str,
-            default="msf")
+            default="postgres")
 
         return parser
 
-    @DockerExtension.ImageDecorator([
-        "postgres:latest",
-        "metasploitframework/metasploit-framework:latest"])
+    @DockerExtension.ImageDecorator(["metasploitframework/metasploit-framework:latest"])
     def do(self, data:bytes=None, options:dict=None) -> bytes:
         """
         Main functionality.
@@ -66,50 +74,67 @@ class Metasploit(DockerExtension, Module):
         """
         super().do(data, options)
 
-        volumes = {}
+        # Container constants
+        HOME = "/usr/share/metasploit-framework"
 
-        for directory in self.options.get("directories"):
+        # Defaults
+        cmd = ["./msfconsole", "-r", "docker/msfconsole.rc"]
+        hosts = {}
+        environment = {}
 
-            # Validate directory
+        # Handle database
+        database = self.options.get("database")
+        if database:
             try:
-                assert os.path.isdir(directory), "Invalid directory: %s" % directory
-            except AssertionError as e:
-                self.throw(e)
+                # Use IP address
+                ip = ipaddress.ip_address(database)
+                hosts["database"] = ip
+                environment["DATABASE_URL"] = "%(user)s:%(password)s@database:%(port)d" % self.options
 
-            # Mount directory in container
-            directory = os.path.abspath(directory)
-            volumes[directory] = {
-                "bind" : directory,
-                "mode" : "rw"
-            }
-            self.info("Mounting directory: %s" % directory)
+            except ValueError:
+                # Use hostname
+                environment["DATABASE_URL"] = "%(user)s:%(password)s@%(database)s:%(port)d" % self.options
 
-        # Prepare database container
-        with self.Container(
-            image="postgres:latest",
-            ports={
-                "5432/tcp" : (self.options.get("interface"), self.options.get("port")),
-            },
-            environment={
-                "POSTGRES_USER" : self.options.get("user"),
-                "POSTGRES_PASSWORD" : self.options.get("password"),
-            }) as db:
+        # Handle input as resource file
+        if data:
+            cmd.append("-r")
+            cmd.append(os.path.join(HOME, "custom.rc"))
 
-            self.info("Started database: %(user)s:%(password)s@%(interface)s:%(port)d" % self.options)
+        # Handle commands
+        for command in self.options.get("commands"):
+            cmd.append("-x")
+            cmd.append(command)
 
-            # Prepare Metasploit container to connect to database
+        # Prepare input and output files
+        with self.IO(data, infile=os.path.join(HOME, "custom.rc")) as io:
+
+            # Handle directories
+            for directory in self.options.get("directories"):
+
+                # Validate directory
+                try:
+                    assert os.path.isdir(directory), "Invalid directory: %s" % directory
+                except AssertionError as e:
+                    self.throw(e)
+
+                # Mount directory in container
+                directory = os.path.abspath(directory)
+                io.volumes[directory] = {
+                    "bind" : directory,
+                    "mode" : "rw"
+                }
+                self.info("Mounting directory: %s" % directory)
+
+            # Prepare Metasploit container
             with self.Container(
                 image="metasploitframework/metasploit-framework:latest",
                 network_mode="host",
                 stdin_open=True,
                 tty=True,
-                volumes=volumes,
-                extra_hosts={
-                    "db" : self.options.get("interface"),
-                },
-                environment={
-                    "DATABASE_URL" : "%(user)s:%(password)s@db:%(port)d" % self.options,
-                }) as container:
+                volumes=io.volumes,
+                extra_hosts=hosts,
+                environment=environment,
+                command=cmd) as container:
 
                 # Enter container
                 container.interact()

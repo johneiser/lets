@@ -2,44 +2,72 @@
 Install
 =======
 
+**lets** is tested on Ubuntu 16.04, some modules may not be available on all platforms.
+
 ============
 Requirements
 ============
 
-- Linux (tested with Ubuntu 16.04)
 - `Docker <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_
 - Python >= 3.5
 
+======
+Docker
+======
+
+**lets** is built on top of `docker <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_, so make sure it is installed. You may need to log out and back in for this to take effect.
+
+.. code-block:: bash
+
+    $ curl -fsSL https://get.docker.com | sudo sh
+    $ sudo usermod -aG docker $USER
+
+
+=================
+Install Using Pip
+=================
+
+Install **lets**:
+
+.. code-block:: bash
+
+   $ pip3 install docker-lets
+
+
+Activate **lets** *tab-completion* for bash:
+
+.. code-block:: bash
+
+   $ lets generate/support/completion/bash >> ~/.profile
+   $ source ~/.profile
+   $ lets sample/my[TAB][TAB]
+   sample/mydockermodule    sample/mymodule
+
+
 ===================
-Virtual Environment
+Install From Source
 ===================
 
-It is highly recommended to use a `python virtual environment <https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv>`_ for this project.  For a quick reminder, here are the steps:
+Use *git* to download **lets** from the `Github <https://github.com/johneiser/lets>`_ repository and install the python requirements with *pip*.
 
-.. code-block::
+.. code-block:: bash
+    
+    ~ $ git clone https://github.com/johneiser/lets
+    ~ $ cd lets
+    ~/lets $ pip3 install -r requirements.txt
 
-   $ pip install virtualenv
-   $ python -m virtualenv -p python3 venv
-   $ source venv/bin/activate
-   (venv) $ python --version
-   Python 3.6.3
-   (venv) $ pip install --upgrade pip
+Enter the **lets** virtual environment in bash to enable *tab-completion*.
 
+.. code-block:: bash
 
-**lets** itself uses a virtual environment, but solely for tab completion - it should be compatible with the python virtual environment and fine to use in tandem.
+    ~/lets $ source lets/bin/activate
+   (lets) ~/lets $ lets sample/my[TAB][TAB]
+   sample/mydockermodule    sample/mymodule
+   (lets) ~/lets $ lexit
+    ~/lets $ 
 
+**lets** uses a virtual environment solely for tab completion, it should be compatible with a python virtual environment and fine to use in tandem.
 
-===========
-From Source
-===========
-
-Use *git* to download **lets** from the `Github Repository <https://github.com/johneiser/lets>`_.  In your python virtual environment, make sure to install the python requirements with *pip*.
-
-.. code-block::
-
-   ~ $ git clone https://github.com/johneiser/lets
-   ~ $ cd lets
-   ~/lets $ pip install -r requirements.txt
 
 
 To get started using **lets**, refer to the :doc:`usage`.  Or, to build your own modules and contribute to the framework, check out :doc:`development`.
