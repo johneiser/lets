@@ -36,7 +36,7 @@ setup(
         # "Development Status :: 4 - Beta",
         # "Development Status :: 5 - Production/Stable",
 
-        "Topic :: OSI Approved :: GNU General Public License v3.0",
+#        "Topic :: OSI Approved :: GNU General Public License v3.0",
 
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
