@@ -4,12 +4,7 @@ Generate a combined x86/x64 Windows messagebox payload.
 
 Usage: python workflows/combined_windows_messagebox.py | xxd
 """
-
-# Find lets
-import os, sys
-sys.path.insert(0, os.path.abspath(os.path.sep.join([os.path.dirname(__file__),".."])))
-
-# Use lets
+import sys
 import lets
 
 # Build x86 payload

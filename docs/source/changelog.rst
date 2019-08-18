@@ -2,6 +2,15 @@
 Changelog
 =========
 
+1.0.2
+^^^^^
+
+August 18, 2019
+
+- Minor documentation fixes
+- Fixed missing import in combined_windows_messagebox workflow
+
+
 1.0.1
 ^^^^^
 

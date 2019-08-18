@@ -18,12 +18,12 @@ To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/i
 
 ## Requirements
 
-- [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>)
+- [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - Python >= 3.5
 
 ## Install
 
-Install [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/>).  Make sure to log out and back in for this to take effect.
+Install [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/).  Make sure to log out and back in for this to take effect.
 
 ```
 $ curl -fsSL https://get.docker.com | sudo sh
