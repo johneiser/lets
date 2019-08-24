@@ -9,7 +9,8 @@ Requirements
 ============
 
 - `Docker <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_
-- Python >= 3.5
+- python >= 3.5
+- python3-pip
 
 ======
 Docker

@@ -47,6 +47,7 @@ class Bash(DockerExtension, Module):
         # Build autocomplete
         autocomplete = """
 # lets bash completion start
+# _modules="$(python3 -c 'from lets.utility import Utility;print(Utility.core_directory())')/modules"
 _modules="%(modules)s"
 _lets()
 {

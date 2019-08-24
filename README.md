@@ -19,7 +19,9 @@ To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/i
 ## Requirements
 
 - [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-- Python >= 3.5
+- python >= 3.5
+- python3-pip
+
 
 ## Install
 

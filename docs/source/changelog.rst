@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.0.3
+^^^^^
+
+August 24, 2019
+
+- Add pip3 as a requirement in documentation
+
 1.0.2
 ^^^^^
 
