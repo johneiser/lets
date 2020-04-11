@@ -6,7 +6,7 @@ Usage: python3 map.py > map.json
 import os, json, lets
 
 MODULE_BASE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    os.path.dirname(os.path.abspath(__file__)),
     "lets",
     "modules"
 )
