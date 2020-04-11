@@ -22,9 +22,7 @@ services:
 before_install:
 
 install:
-  - pip install --upgrade pip
-  - pip install -r requirements.txt
+  - pip install .
 
 script:
-  - python setup.py test
-  - python lets/api/manage.py test rest
+  - python -m unittest lets
