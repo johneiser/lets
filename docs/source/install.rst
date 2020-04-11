@@ -43,7 +43,7 @@ Activate **lets** *tab-completion* for bash:
     $ lets sample/my[TAB][TAB]
     sample/mydockermodule   sample/mymodule
 
-Refer to the :doc:`Usage <usage>` documentation to get started, or `explore <https://johneiser.github.io/lets>`_ some of the available modules.
+Refer to the :doc:`Usage <usage>` documentation to get started, or `explore <https://johneiser.github.io/lets/explore/>`_ some of the available modules.
 
 ----------
 

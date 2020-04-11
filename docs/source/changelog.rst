@@ -9,7 +9,7 @@ April 10, 2020
 
 - Completely rewritten
 - Added iterate and generate
-- Added module explorer (https://johneiser.github.io/lets/)
+- Added module explorer (https://johneiser.github.io/lets/explore/)
 - Changed HTTP API from django to flask
 
 1.0.3

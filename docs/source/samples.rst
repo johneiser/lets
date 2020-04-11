@@ -28,4 +28,4 @@ With the Dockerfile in place, we can construct the module and trust that **lets*
 
 .. literalinclude:: ../../lets/modules/sample/mydockermodule.py
 
-For further examples, check out the other `modules <https://johneiser.github.io/lets>`_ included in the framework.
+For further examples, check out the other `modules <https://johneiser.github.io/lets/explore/>`_ included in the framework.

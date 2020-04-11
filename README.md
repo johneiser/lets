@@ -14,7 +14,7 @@ Each module accepts input and options, executes some functionality, and returns 
 
 In this manner, modules can be *chained* together, allowing completely unrelated functionality to work together seamlessly.  Modules can be as simple as base64 encoding or reasonably complex with docker integration.
 
-To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/index.html) or explore the [modules](https://johneiser.github.io/lets).
+To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/index.html) or explore the [modules](https://johneiser.github.io/lets/explore/).
 
 ## Requirements
 
@@ -55,7 +55,7 @@ $ echo SGVsbG8gd29ybGQhCg== | lets decode/base64
 Hello world!
 ```
 
-For further details, refer to the [docs](https://lets.readthedocs.io/en/latest/usage.html) and [modules](https://johneiser.github.io/lets).
+For further details, refer to the [docs](https://lets.readthedocs.io/en/latest/usage.html) and [modules](https://johneiser.github.io/lets/explore/).
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fjohneiser%2Flets.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fjohneiser%2Flets?ref=badge_large)
