@@ -16,10 +16,10 @@ For example:
 
         with Container(
             image="debian:latest",
-            command="/bin/bash"
+            command="date"
             ) as container:
 
-            container.interact()
+            yield container.logs()
 
 ----------
 

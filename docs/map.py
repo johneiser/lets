@@ -26,6 +26,7 @@ def generate():
                 "id" : path,
                 "parent" : parent or "#",
                 "text" : folder,
+                "type" : "default",
             }
 
         # Yield modules
@@ -45,7 +46,11 @@ def generate():
 
 def main():
     """Output map of modules."""
-    print(json.dumps(list(generate())))
+    print(json.dumps(
+        sorted(list(
+            generate()), key=lambda obj:obj['id']
+        )
+    ))
 
 if __name__ == "__main__":
     main()

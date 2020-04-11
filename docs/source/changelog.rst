@@ -2,6 +2,14 @@
 Changelog
 =========
 
+2.0.1
+^^^^^
+
+April 11, 2020
+
+- Fix github integrations
+- Sort module explorer data
+
 2.0.0
 ^^^^^
 
@@ -26,7 +34,6 @@ August 18, 2019
 
 - Minor documentation fixes
 - Fixed missing import in combined_windows_messagebox workflow
-
 
 1.0.1
 ^^^^^
