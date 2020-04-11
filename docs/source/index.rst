@@ -12,7 +12,7 @@ Each module accepts :code:`input` and :code:`options`, executes some functionali
 
 In this manner, modules can be *chained* together, allowing completely unrelated functionality to work together seamlessly. Modules can be as simple as base64 encoding or reasonably complex with docker integration.
 
-`Explore <https://johneiser.github.io/lets>`_ available modules, take a deeper look with :doc:`usage`, or get started with :doc:`install`.
+`Explore <https://johneiser.github.io/lets/>`_ available modules, take a deeper look with :doc:`usage`, or get started with :doc:`install`.
 
 ----------
 
