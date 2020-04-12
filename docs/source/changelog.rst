@@ -8,6 +8,7 @@ Changelog
 April 12, 2020
 
 - Remove version references after install
+- Increase logging threshold when testing
 
 2.0.1
 ^^^^^

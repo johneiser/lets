@@ -17,8 +17,9 @@ Run a single module's tests from python
 > import lets
 > lets.test("encode/base64")
 """
-import os, unittest
+import os, unittest, logging
 from .module import load, load_all
+from .logger import handler
 
 class BashInterfaceTests(unittest.TestCase):
     """
@@ -524,6 +525,7 @@ def load_tests(loader, tests, pattern):
     :param str pattern:
     """
     suite = unittest.TestSuite()
+    handler.setLevel(logging.CRITICAL)
 
     # Add local tests
     suite.addTests(loader.loadTestsFromTestCase(BashInterfaceTests))
