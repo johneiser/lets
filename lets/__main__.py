@@ -110,7 +110,6 @@ from .parser import CustomArgumentParser, main_parser, module_parser, DEFAULT_IT
 
 # TODO: lets.list?
 # TODO: lets.exists?
-# TODO: lets.version?
 
 def help(module=None):
     """

@@ -60,8 +60,6 @@ class Module(object):
     the :py:meth:`add_arguments <lets.module.Module.add_arguments>`
     method.
     """
-    # version = ""
-    # author = ""
 
     _input = None
     """

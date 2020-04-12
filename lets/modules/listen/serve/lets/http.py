@@ -72,10 +72,6 @@ class Http(Module):
                 if kwargs.get("help"):
                     return lets.help(module), 200
 
-                # TODO: Handle version
-                # if kwargs.get("version"):
-                #     return lets.version(module), 200
-
                 data = request.get_data(cache=False) or None
 
                 # Execute module (raises ModuleNotFoundError, ValueError, TypeError, KeyError)

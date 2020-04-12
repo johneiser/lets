@@ -2,6 +2,13 @@
 Changelog
 =========
 
+2.0.2
+^^^^^
+
+April 12, 2020
+
+- Remove version references after install
+
 2.0.1
 ^^^^^
 

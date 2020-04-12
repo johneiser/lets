@@ -14,12 +14,6 @@ DEFAULT_OUTPUT      = sys.stdout.buffer
 DEFAULT_ITERATE     = False
 DEFAULT_GENERATE    = False
 
-with open(os.path.join(
-    os.path.dirname(os.path.dirname((os.path.abspath(__file__)))),
-    "VERSION"
-)) as f:
-    VERSION = f.read()
-
 class CustomArgumentParser(argparse.ArgumentParser):
     """
     A custom wrapper around the ArgumentParser is used to add
@@ -104,7 +98,6 @@ def main_parser(verbose=DEFAULT_VERBOSE, input=DEFAULT_INPUT, output=DEFAULT_OUT
         prog=__package__,
         epilog="tab-completion (bash):\n  lets complete/bash >> ~/.profile && source ~/.profile\n ",
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument(      "--version", action="version", version="%(prog)s "+VERSION, help=argparse.SUPPRESS)
     parser.add_argument("-v", "--verbose", action="store_true", help="show extra information", default=False)
     parser.add_argument(      "--input", type=argparse.FileType("rb"), help=argparse.SUPPRESS, default=sys.stdin.buffer)
     parser.add_argument("-o", "--output", type=argparse.FileType("wb"), help=argparse.SUPPRESS, default=sys.stdout.buffer)
@@ -126,7 +119,6 @@ def module_parser(cls, verbose=DEFAULT_VERBOSE, input=DEFAULT_INPUT, output=DEFA
         prog=cls.__name__.lower(),
         description=cls.__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    # parser.add_argument(      "--version", action="version", version="%(prog)s " + "%s" % cls.version, help=argparse.SUPPRESS)
     parser.add_argument("-v", "--verbose", action="store_true", help="show extra information", default=verbose)
     parser.add_argument(      "--input", type=argparse.FileType("rb"), help=argparse.SUPPRESS, default=input)
     parser.add_argument("-o", "--output", type=argparse.FileType("wb"), help=argparse.SUPPRESS, default=output)
