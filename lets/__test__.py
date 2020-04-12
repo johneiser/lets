@@ -92,7 +92,7 @@ class PythonInterfaceTests(unittest.TestCase):
 
     def test_module_help_not_found(self):
         import lets
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(ImportError):
             lets.help("")
 
     def test_module_help_bad_module(self):
@@ -118,7 +118,7 @@ class PythonInterfaceTests(unittest.TestCase):
 
     def test_module_usage_not_found(self):
         import lets
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(ImportError):
             lets.usage("")
 
     def test_module_usage_bad_module(self):
@@ -132,7 +132,7 @@ class PythonInterfaceTests(unittest.TestCase):
 
     def test_do_module_not_found(self):
         import lets
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(ImportError):
             lets.do("")
 
     def test_do_bad_module(self):
@@ -558,14 +558,14 @@ def test(module=None):
     Load and run tests present in the framework.
 
     :param str module: Path of the module to test
-    :raises ModuleNotFoundError: If provided module is not found
+    :raises ImportError: If provided module is not found
     :raises TypeError: If provided module is invalid
     """
     if module:
         # Load the module
         mod = load(module)
         if not mod:
-            raise ModuleNotFoundError("No module at path: %s" % module)
+            raise ImportError("No module at path: %s" % module)
 
         # Perform tests found in the module
         unittest.main(module=mod.__name__)

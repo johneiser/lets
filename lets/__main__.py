@@ -118,11 +118,11 @@ def help(module=None):
     :param str module: Path of the module
     :return: Formatted help string
     :rtype: str
-    :raises ModuleNotFoundError: If provided module is not found
+    :raises ImportError: If provided module is not found
     :raises TypeError: If provided module is invalid
     """
     if module is not None:
-        # Load and find module class (raises ModuleNotFoundError, TypeError)
+        # Load and find module class (raises ImportError, TypeError)
         cls = Module._find(load(module))
 
         # Build module parser from module class
@@ -143,11 +143,11 @@ def usage(module=None):
     :param str module: Path of the module
     :return: Formatted help string
     :rtype: str
-    :raises ModuleNotFoundError: If provided module is not found
+    :raises ImportError: If provided module is not found
     :raises TypeError: If provided module is invalid
     """
     if module is not None:
-        # Load and find module (raises ModuleNotFoundError, TypeError)
+        # Load and find module (raises ImportError, TypeError)
         cls = Module._find(load(module))
 
         # Build module parser from module
@@ -174,7 +174,7 @@ def do(module, input=None, iterate=DEFAULT_ITERATE, generate=DEFAULT_GENERATE, *
     :param ** kwargs: Options for the module
     :return: Output from the module
     :rtype: generator or bytes
-    :raises ModuleNotFoundError: If provided module is not found
+    :raises ImportError: If provided module is not found
     :raises TypeError: If provided module is invalid
     :raises KeyError: If provided key is invalid
     :raises ValueError: If provided value is invalid
@@ -245,7 +245,7 @@ def do(module, input=None, iterate=DEFAULT_ITERATE, generate=DEFAULT_GENERATE, *
     """
     last_level = handler.level
     try:
-        # Load and find module (raises ModuleNotFoundError, TypeError)
+        # Load and find module (raises ImportError, TypeError)
         cls = Module._find(load(module))
 
         # Increase verbosity if necessary
@@ -358,7 +358,7 @@ def main():
         handler.setLevel(LEVEL_DEV)
 
     try:
-        # Load and find module class (raises TypeError, ModuleNotFoundError)
+        # Load and find module class (raises TypeError, ImportError)
         module = kwargs.pop("module")
         cls = Module._find(load(module))
 
@@ -366,7 +366,7 @@ def main():
         _main(cls, **kwargs)
 
     # Handle failure to find module
-    except ModuleNotFoundError as e:
+    except ImportError as e:
         log.critical(e)
 
     # Handle bad argument syntax

@@ -74,7 +74,7 @@ class Http(Module):
 
                 data = request.get_data(cache=False) or None
 
-                # Execute module (raises ModuleNotFoundError, ValueError, TypeError, KeyError)
+                # Execute module (raises ImportError, ValueError, TypeError, KeyError)
                 results = lets.do(module, data, **kwargs)
 
                 # Return empty results
@@ -95,7 +95,7 @@ class Http(Module):
                     return results, 200
 
             # Handle failure to find module
-            except ModuleNotFoundError as e:
+            except ImportError as e:
                 log.error(str(e))
                 return f"error: {e}\n" + lets.usage(), 400
 

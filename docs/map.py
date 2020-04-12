@@ -41,7 +41,7 @@ def generate():
                     "type" : "module",
                     "help" : lets.help(module),
                 }
-            except ModuleNotFoundError as e:
+            except ImportError as e:
                 pass
 
 def main():

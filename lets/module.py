@@ -174,7 +174,7 @@ class Module(object):
         :param type module: Python module to search
         :return: Module class
         :rtype: :py:class:`lets.module.Module`
-        :raises ModuleNotFoundError: If provided module is not found
+        :raises ImportError: If provided module is not found
         :raises TypeError: If provided module is invalid
         :meta private:
         """
@@ -187,7 +187,7 @@ class Module(object):
             if key.lower() == name.lower() and callable(attr) and issubclass(attr, cls) and attr is not cls:
                 return attr
 
-        raise ModuleNotFoundError("No module named '%s'" % module)
+        raise ImportError("No module named '%s'" % module)
 
     #
     # Module overrides
@@ -340,7 +340,7 @@ def load(module):
     :param str module: Relative path to module
     :return: Loaded module
     :rtype: module
-    :raises ModuleNotFoundError: If provided module is not found
+    :raises ImportError: If provided module is not found
     :raises TypeError: If provided module is invalid
     :meta private:
     """
@@ -354,7 +354,7 @@ def load(module):
             # Take note and continue
             log.log(LEVEL_DEV, str(e))
 
-    raise ModuleNotFoundError("No module named '%s'" % module)
+    raise ImportError("No module named '%s'" % module)
 
 def load_all():
     """
@@ -387,7 +387,7 @@ def load_all():
                         # Take note and continue (should never get here)
                         log.log(LEVEL_DEV, str(e))
 
-                    except ModuleNotFoundError as e:
+                    except ImportError as e:
                         # Take note and continue
                         log.log(LEVEL_DEV, str(e))
 
@@ -406,11 +406,11 @@ class ModuleTests(TestCase):
             m = Module._find(None)
 
     def test_find_empty(self):
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(ImportError):
             m = Module._find(os)
 
     def test_load_not_found(self):
-        with self.assertRaises(ModuleNotFoundError):
+        with self.assertRaises(ImportError):
             mod = load("")
 
     def test_load_bad_module(self):
