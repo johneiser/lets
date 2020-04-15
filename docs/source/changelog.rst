@@ -10,6 +10,7 @@ April 12, 2020
 - Remove version references after install
 - Increase logging threshold when testing
 - Changed ModuleNotFoundError to ImportError, for python 3.5 compatibility
+- Removed f"" based logging, for python 3.5 compatibility
 
 2.0.1
 ^^^^^
