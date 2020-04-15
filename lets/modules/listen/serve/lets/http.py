@@ -97,12 +97,12 @@ class Http(Module):
             # Handle failure to find module
             except ImportError as e:
                 log.error(str(e))
-                return f"error: {e}\n" + lets.usage(), 400
+                return "error: %s\n%s" % (str(e), lets.usage()), 400
 
             # Handle any errors coming from module
             except Exception as e:
                 log.error(str(e))
-                return f"error: {e}\n" + lets.usage(module), 400
+                return "error: %s\n%s" % (str(e), lets.usage(module)), 400
 
         # Generate SSL context, if necessary
         context = None
