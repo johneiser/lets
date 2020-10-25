@@ -27,8 +27,7 @@ class Http(Module):
         app = Flask(__name__)
 
         # Build request handler
-        @app.route("/", methods=["GET", "POST"])
-        @app.route("/<path:module>", methods=["GET", "POST"])
+        @app.route("/lets/<path:module>", methods=["GET", "POST"])
         def api(module=None):
             
             try:
@@ -37,8 +36,8 @@ class Http(Module):
                 data = request.get_data(cache=False) or None
 
                 # Find module
-                assert module.startswith("lets/"), "Invalid module: %s" % module
-                path = os.path.extsep.join([_ for _ in module.split(os.path.sep) if _])
+                module = os.path.join("lets", module.strip("/"))
+                path = module.replace(os.path.sep, os.path.extsep)
                 mod = importlib.import_module(path)
 
                 # Execute module
