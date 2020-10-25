@@ -28,7 +28,7 @@ Logging
 
 If you need to present any information to the user that should not be included in the output buffer, use the :py:attr:`logger <lets.__module__.Module.log>`.
 
-.. autoproperty:: lets.__module__.Module.log
+.. autoattribute:: lets.__module__.Module.log
 
 Example
 -------
@@ -49,7 +49,7 @@ As dandy as it is chaining small python scripts together, the true leverage **le
 
 If the module does use any docker containers, make sure to list its required :py:attr:`images <lets.__module__.Module.images>` in the class definition.
 
-.. autoproperty:: lets.__module__.Module.images
+.. autoattribute:: lets.__module__.Module.images
 
 
 Interacting with Containers
@@ -75,7 +75,7 @@ The following module performs the following task: *any input data will be presen
 
 Before we cover the module, we need to prepare the necessary docker image. In this case, we'll use a Debian image with :code:`hexedit` installed. We place the following file at :code:`lets/__images__/local/sample/Dockerfile`:
 
-.. literalinclude:: ../../images/local/sample/Dockerfile
+.. literalinclude:: ../../lets/__images__/local/sample/Dockerfile
 
 
 With the Dockerfile in place, we can construct the module and trust that **lets** will find and build the image before the module gets executed.
