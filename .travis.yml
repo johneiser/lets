@@ -14,9 +14,6 @@ matrix:
     - name: "Python 3.8 on Ubuntu 16.04"
       python: 3.8
       dist: xenial
-    - name: "Python 3.9 on Ubuntu 16.04"
-      python: 3.9
-      dist: xenial
 
 branches:
   only:

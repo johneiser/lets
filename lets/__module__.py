@@ -3,12 +3,6 @@ import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess
 log = logging.getLogger(__package__)
 client = docker.from_env()
 
-# Confirm docker is installed
-try:
-    client.ping()
-except docker.errors.APIError as e:
-    raise AssertionError("Unable to connect to docker, is it installed?")
-
 
 class ModuleMeta(type):
 
@@ -122,9 +116,13 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
         :param list images: List of required docker images to prepare
         :meta private:
         """
-        base,_,_ = self.__file__.partition(
-            self.__name__.replace(os.path.extsep, os.path.sep))
-
+        # Confirm docker is installed
+        if images:
+            try:
+                client.ping()
+            except docker.errors.APIError as e:
+                raise AssertionError("Unable to connect to docker, is it installed?")
+        
         for tag in images or self.images:
             image = None
 
@@ -142,6 +140,7 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
             # Check if image can be built locally
             try:
                 name,_,version = tag.partition(":")
+                base,_,_ = self.__file__.partition(self.__name__.replace(os.path.extsep, os.path.sep))
                 path = os.path.join(base, "lets", "__images__", name)
                 if os.path.isdir(path):
                     self.log.info("Building image: %s", path)
