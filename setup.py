@@ -17,7 +17,8 @@ setup(
     url = "https://github.com/johneiser/lets",
     download_url = "https://github.com/johneiser/lets/releases",
     packages = find_namespace_packages(include=[
-        "lets.*"
+        "lets",
+        "lets.*",
     ]),
     keywords = [
         "lets",
