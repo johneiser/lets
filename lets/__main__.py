@@ -31,7 +31,9 @@ def main():
         assert isinstance(mod, Module), "No module named '%s'" % mod.__name__
 
         # Re-process arguments with module
-        parser = argparse.ArgumentParser(kwargs.pop("module"), description=mod.__class__.__doc__)
+        parser = argparse.ArgumentParser(kwargs.pop("module"),
+                description=mod.__class__.__doc__,
+                formatter_class=argparse.RawTextHelpFormatter)
         parser.add_argument("-i", "--iterate", action="store_true", help="iterate over input")
         parser.add_argument("-g", "--generate", action="store_true", help="generate each output")
         parser.add_argument(      "--input", type=argparse.FileType("rb"), help=argparse.SUPPRESS, default=sys.stdin.buffer)

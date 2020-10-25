@@ -7,7 +7,9 @@ class Http(Module):
     Serve the lets framework over an HTTP API.
 
     Usage:
-        $ lets() { curl -skL --data-binary @- "http://localhost:5000/lets/$1"; }
+        $ lets() {
+            curl -skL --data-binary @- "http://localhost:5000/lets/$1";
+            }
         $ echo "abcd" | lets "encode/base64?generate=True"
     """
 
