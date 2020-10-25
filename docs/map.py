@@ -21,12 +21,13 @@ def generate():
         # Yield folder
         if path:
             [parent,_,folder] = path.rpartition(os.path.sep)
-            yield {
-                "id" : path,
-                "parent" : parent or "#",
-                "text" : folder,
-                "type" : "default",
-            }
+            if not parent.startswith("_") and not folder.startswith("_"):
+                yield {
+                    "id" : path,
+                    "parent" : parent or "#",
+                    "text" : folder,
+                    "type" : "default",
+                }
 
         # Yield modules
         for file in files:
