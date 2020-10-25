@@ -37,6 +37,7 @@ class Http(Module):
                 data = request.get_data(cache=False) or None
 
                 # Find module
+                assert module.startswith("lets/"), "Invalid module: %s" % module
                 path = os.path.extsep.join([_ for _ in module.split(os.path.sep) if _])
                 mod = importlib.import_module(path)
 
@@ -61,12 +62,14 @@ class Http(Module):
                     return results, 200
 
             # Handle failure to find module
-            except ImportError as e:
+            except (ImportError, AssertionError) as e:
                 self.log.error(e)
+                return b"", 404
 
             # Handle any errors coming from module
             except Exception as e:
                 self.log.exception(e)
+                return str(e), 500
 
         # Generate SSL context, if necessary
         context = None

@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.0.1
+^^^^^
+
+October 25, 2020
+
+- Try to limit arbitrary module imports in listen/serve/lets/http
+
+
 3.0.0
 ^^^^^
 
