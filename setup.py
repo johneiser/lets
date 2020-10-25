@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 import os
 
 def read(fname):
@@ -16,16 +16,15 @@ setup(
     author = "johneiser",
     url = "https://github.com/johneiser/lets",
     download_url = "https://github.com/johneiser/lets/releases",
-    packages = [
-        "lets"
-    ],
-    include_package_data = True,
+    packages = find_namespace_packages(include=[
+        "lets.*"
+    ]),
     keywords = [
         "lets",
         "docker",
         "framework",
     ],
-    python_requres = ">=3.5.0",
+    python_requires = ">=3.5.0",
     install_requires = [
         "docker",
         "flask",

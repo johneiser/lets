@@ -15,7 +15,7 @@ October 25, 2020
 
 October 25, 2020
 
-- Complete rewrite as a `native namespace package <https://packaging.python.org/guides/packaging-namespace-packages/#native-namespace-packages>`_, existing modules will be moved to related docker_lets_* packages.
+- Complete rewrite as a `native namespace package <https://packaging.python.org/guides/packaging-namespace-packages/#native-namespace-packages>`_, existing modules will be moved to related docker-lets-* packages.
 
 
 2.0.2
