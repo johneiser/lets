@@ -1,7 +1,7 @@
 import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io
 
 log = logging.getLogger(__package__)
-client = docker.from_env()
+client = None
 
 
 class ModuleMeta(type):
@@ -116,8 +116,12 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
         :param list images: List of required docker images to prepare
         :meta private:
         """
+        global client
+
         # Confirm docker is installed
-        if images:
+        if images or self.images:
+            if not client:
+                client = docker.from_env()
             try:
                 client.ping()
             except docker.errors.APIError as e:
