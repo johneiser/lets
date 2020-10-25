@@ -12,7 +12,7 @@ Each module accepts input and options, executes some functionality, and returns 
 [input] | lets <module> [options]
 ```
 
-In this manner, modules can be *chained* together, allowing completely unrelated functionality to work together seamlessly.  Modules can be as simple as base64 encoding or reasonably complex with docker integration.
+In this manner, modules can be *chained* together, allowing completely unrelated functionality to work together seamlessly. Modules can be as simple as base64 encoding or reasonably complex with docker integration.
 
 To learn more, take a look at the [docs](https://lets.readthedocs.io/en/latest/index.html) or explore the [modules](https://johneiser.github.io/lets/).
 
@@ -37,10 +37,16 @@ Install **lets**
 $ pip3 install docker-lets
 ```
 
+Install **lets** extensions
+
+```
+$ pip3 install docker-lets-pentest
+```
+
 Activate **lets** *tab-completion* for bash.
 
 ```
-$ lets complete/bash >> ~/.profile
+$ lets support/autocomplete bash >> ~/.profile
 $ source ~/.profile
 $ lets sample/my[TAB][TAB]
 sample/mydockermodule   sample/mymodule

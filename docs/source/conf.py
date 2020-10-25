@@ -12,9 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-sys.don_write_bytecode = True
-
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath('.'))))
 
 
 # -- Project information -----------------------------------------------------
@@ -24,12 +22,8 @@ copyright = '2020, johneiser'
 author = 'johneiser'
 
 # The full version, including alpha/beta/rc tags
-with open(os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "VERSION"
-    )) as f:
+with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "VERSION"), "r") as f:
     release = f.read()
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -37,7 +31,7 @@ with open(os.path.join(
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

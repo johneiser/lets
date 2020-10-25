@@ -3,12 +3,11 @@ Generate a json map of modules for use with jstree.
 
 Usage: python3 map.py > map.json
 """
-import os, json, lets
+import os, json, lets, importlib
 
 MODULE_BASE = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "lets",
-    "modules"
 )
 
 def generate():
@@ -32,17 +31,19 @@ def generate():
         # Yield modules
         for file in files:
             [name,_,ext] = file.rpartition(os.path.extsep)
-            module = os.path.join(path, name)
-            try:
-                yield  {
-                    "id" : module + "_",
-                    "parent" : path or "#",
-                    "text" : name,
-                    "type" : "module",
-                    "help" : lets.help(module),
-                }
-            except ImportError as e:
-                pass
+            module = os.path.join("lets", path, name)
+            if not name.startswith("_"):
+                try:
+                    mod = importlib.import_module(module.replace(os.path.sep, os.path.extsep))
+                    yield  {
+                        "id" : module + "_",
+                        "parent" : path or "#",
+                        "text" : name,
+                        "type" : "module",
+                        "help" : mod.help(),
+                        }
+                except ImportError as e:
+                    pass
 
 def main():
     """Output map of modules."""
