@@ -8,7 +8,7 @@ log.setLevel(logging.DEBUG)
 def main():
 
     # Process arguments
-    parser = argparse.ArgumentParser("[INPUT] | " + __package__)
+    parser = argparse.ArgumentParser(__package__)
     parser.add_argument("module", type=str, help="module to use")
     parser.add_argument("options", nargs=argparse.REMAINDER, help="module options")
     parser.add_argument("-i", "--iterate", action="store_true", help="iterate over input")
@@ -31,7 +31,7 @@ def main():
         assert isinstance(mod, Module), "No module named '%s'" % mod.__name__
 
         # Re-process arguments with module
-        parser = argparse.ArgumentParser("[INPUT] | " + kwargs.pop("module"), description=mod.__class__.__doc__)
+        parser = argparse.ArgumentParser(kwargs.pop("module"), description=mod.__class__.__doc__)
         parser.add_argument("-i", "--iterate", action="store_true", help="iterate over input")
         parser.add_argument("-g", "--generate", action="store_true", help="generate each output")
         parser.add_argument(      "--input", type=argparse.FileType("rb"), help=argparse.SUPPRESS, default=sys.stdin.buffer)

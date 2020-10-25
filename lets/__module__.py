@@ -68,7 +68,7 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
         :meta private:
         """
         module = cls.__module__.replace(os.path.extsep, os.path.sep)
-        parser = argparse.ArgumentParser("[INPUT] | " + module, description=cls.__doc__)
+        parser = argparse.ArgumentParser(module, description=cls.__doc__)
         parser.add_argument("-i", "--iterate", action="store_true", help="iterate over input")
         parser.add_argument("-g", "--generate", action="store_true", help="generate each output")
         parser.add_argument(      "--input", type=argparse.FileType("rb"), help=argparse.SUPPRESS)

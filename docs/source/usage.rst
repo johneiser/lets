@@ -20,7 +20,7 @@ Once :doc:`installed <install>`, **lets** becomes available as a command in the 
 .. code-block:: bash
 
     $ lets -h
-    usage: [INPUT] | lets [-h] [-i] [-g] [-o OUTPUT] [-v] module ...
+    usage: lets [-h] [-i] [-g] [-o OUTPUT] [-v] module ...
 
     positional arguments:
         module                module to use
@@ -48,7 +48,7 @@ Each module also provides its own help text.
 
     $ lets encode/base64 -h
 
-    usage: [INPUT] | encode/base64 [-h] [-i] [-g] [-o OUTPUT] [-v]
+    usage: encode/base64 [-h] [-i] [-g] [-o OUTPUT] [-v]
 
     Base64 encode the provided data.
 
