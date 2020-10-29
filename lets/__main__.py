@@ -74,16 +74,20 @@ def main():
             output.write(results)
             output.flush()
 
+    # Handle user cancellation
     except KeyboardInterrupt:
         sys.stdout.write("\r")
         sys.stdout.flush()
 
+    # Handle missing module
     except ImportError as e:
         log.warning(e)
 
-    except AssertionError as e:
+    # Handle known errors
+    except (AssertionError, TypeError) as e:
         log.error(e)
 
+    # Handle unknown  errors
     except Exception as e:
         log.exception(e)
 

@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.0.2
+^^^^^
+
+October 29, 2020
+
+- Handle NotFound exception in Container 'with' statement
+
+
 3.0.1
 ^^^^^
 

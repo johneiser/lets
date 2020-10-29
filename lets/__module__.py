@@ -261,12 +261,15 @@ class Container(docker.models.containers.Container):
         return self
 
     def __exit__(self, etype, value, traceback):
-        pass
+        
+        # Ignore errors for missing container
+        if etype in [docker.errors.NotFound]:
+            return True
 
-    def __del__(self):
+        # Remove container if still running
         try:
             self.kill()
-        except docker.errors.APIError as e:
+        except (docker.errors.APIError, docker.errors.NotFound) as e:
             pass
 
     def interact(self):
