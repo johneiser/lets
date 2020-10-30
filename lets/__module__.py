@@ -1,4 +1,4 @@
-import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io
+import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io, unittest
 
 log = logging.getLogger(__package__)
 client = None
@@ -230,7 +230,7 @@ class Container(docker.models.containers.Container):
         container.
 
         :param str image: The image to run
-        :param str or list command: The command to run in the container
+        :param str|list command: The command to run in the container
         :return: Container
         :rtype: docker.models.containers.Container
 
@@ -295,6 +295,28 @@ class Container(docker.models.containers.Container):
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
         proc.communicate()
 
+    def output(self, **kwargs):
+        """
+        Wait for the container to complete and return its output.
+
+        Example:
+
+        .. code-block:: python
+
+            with Container.run(
+                image="debian:latest",
+                command="date") as container:
+
+                yield container.output()
+        """
+        kwargs.update({
+            "stream" : True,
+            "timestamps" : False,
+            "follow" : True,
+            })
+
+        return b"".join(list(self.logs(**kwargs)))
+        
 
 class Mount(tempfile.TemporaryDirectory):
     """
@@ -381,3 +403,52 @@ class Mount(tempfile.TemporaryDirectory):
                     f.write(b"data")
         """
         return open(os.path.join(self.name, file), *args, **kwargs)
+
+
+class TestCase(unittest.TestCase):
+    """
+    Functionality should be verified by a series of tests, which
+    can be included directly in the module as a TestCase.
+
+    .. code-block:: python
+
+        class MyModule(Module):
+            ...
+
+        class MyModuleTests(TestCase):
+            def test_simple(self):
+                self.assertTrue(True)
+    """
+    images = []
+    """
+    Specify required docker images.
+
+    .. code-block:: python
+
+        class MyModuleTests(TestCase):
+            images = ["python:2", "python:3"]
+    """
+
+    module = None
+    """
+    The neighboring module will already be imported.
+
+    .. code-block:: python
+
+        class MyModuleTests(TestCase):
+            def test_simple(self):
+                data = bytes(range(0,256))
+                result = self.module(data)
+                ...
+    """
+
+    def setUp(self):
+        """
+        Make preparations before tests are called.
+
+        :meta private:
+        """
+        import importlib
+        self.module = importlib.import_module(self.__module__)
+        self.module._prep(self.images)
+

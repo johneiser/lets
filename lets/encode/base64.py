@@ -1,4 +1,4 @@
-from lets.__module__ import Module
+from lets.__module__ import Module, TestCase
 import base64
 
 
@@ -12,14 +12,7 @@ class Base64(Module):
             yield base64.b64encode(data)
 
 
-from unittest import TestCase
-
-
 class Base64Tests(TestCase):
-
-    def setUp(self):
-        import importlib
-        self.module = importlib.import_module(__name__)
 
     def test_all_bytes(self):
         test = bytes(range(0,256))

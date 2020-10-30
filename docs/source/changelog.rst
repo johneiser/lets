@@ -2,6 +2,15 @@
 Changelog
 =========
 
+3.0.3
+^^^^^
+
+October 30, 2020
+
+- Added __module__.TestCase
+- Added __module__.Container.output
+
+
 3.0.2
 ^^^^^
 

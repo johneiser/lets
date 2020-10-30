@@ -60,6 +60,11 @@ There may be some situations where you want the user to be able to :py:meth:`int
 .. automethod:: lets.__module__.Container.interact
 
 
+On the other hand, you can simply fetch the :py:meth:`output <lets.__module__.Container.output>` when the container is complete.
+
+.. automethod:: lets.__module__.Container.output
+
+
 Communicating with Containers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -83,3 +88,10 @@ With the Dockerfile in place, we can construct the module and trust that **lets*
 .. literalinclude:: ../../lets/sample/mydockermodule.py
 
 
+Testing
+-------
+
+If possible, each module should be accompanied by one or more tests to confirm automatically that it is still functional. To do so, implement a :py:class:`TestCase <lets.__module__.TestCase>` in your module file.
+
+.. autoclass:: lets.__module__.TestCase
+    :members: images, module
