@@ -41,7 +41,7 @@ Install **lets** extensions
 
 ```
 $ git clone https://github.com/johneiser/lets_pentest
-$ pip3 install -e ./lets_pentest
+$ pip3 install ./lets_pentest
 ```
 
 Activate **lets** *tab-completion* for bash.
