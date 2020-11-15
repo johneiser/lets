@@ -64,15 +64,16 @@ def main():
         results = mod(**kwargs)
 
         # Deliver results
-        if args.generate:
-            for result in results:
-                output.write(result)
-                if args.generate and not result.endswith(b"\n"):
-                    output.write(b"\n")
+        if results:
+            if args.generate:
+                for result in results:
+                    output.write(result)
+                    if args.generate and not result.endswith(b"\n"):
+                        output.write(b"\n")
+                    output.flush()
+            else:
+                output.write(results)
                 output.flush()
-        else:
-            output.write(results)
-            output.flush()
 
     # Handle user cancellation
     except KeyboardInterrupt:

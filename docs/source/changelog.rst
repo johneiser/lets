@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.0.4
+^^^^^
+
+November 14, 2020
+
+- Fixed bug forcing modules to return results
+
+
 3.0.3
 ^^^^^
 

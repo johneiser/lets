@@ -209,7 +209,7 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
 
         # Merge results if not generating
         if not generate:
-            results = b"".join(list(results))
+            results = b"".join(list(results)) if results else b""
 
         return results
 
