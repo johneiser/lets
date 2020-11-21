@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.0.5
+^^^^^
+
+November 21, 2020
+
+- Changed generate to only add newlines on string output
+
+
 3.0.4
 ^^^^^
 

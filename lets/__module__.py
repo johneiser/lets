@@ -5,7 +5,9 @@ client = None
 
 
 class ModuleMeta(type):
-
+    """
+    Enable a module to register itself as callable upon import.
+    """
     def __init__(cls, name, bases, namespace):
         super(ModuleMeta, cls).__init__(name, bases, namespace)
 
@@ -15,10 +17,10 @@ class ModuleMeta(type):
 
 
 class ModuleLogger(logging.LoggerAdapter):
-
+    """
+    Add module context while logging.
+    """
     def process(self, msg, kwargs):
-
-        # Add module context to logging
         return "[%(module)s] " % self.extra + str(msg), kwargs
 
 
@@ -91,7 +93,6 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
             @classmethod
             def add_arguments(cls, parser):
                 parser.add_argument("-f", "--flag", action="store_true")
-
         """
 
     def handle(self, input, **kwargs):
@@ -289,7 +290,6 @@ class Container(docker.models.containers.Container):
                 tty=True) as container:
 
                 container.interact()
-
         """
         proc = subprocess.Popen(["docker", "attach", self.name],
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
@@ -321,7 +321,7 @@ class Container(docker.models.containers.Container):
 class Mount(tempfile.TemporaryDirectory):
     """
     When dealing with docker containers, a module may need to
-    pass data between the host and the container. An Mount context
+    pass data between the host and the container. A Mount context
     manager can simplify that process by mounting a temporary
     directory to the container and reading or writing data
     to it as needed.
@@ -356,8 +356,8 @@ class Mount(tempfile.TemporaryDirectory):
     def volumes(self):
         """
         Object used for mounting in docker containers. By placing
-        this object in the 'volumes' keyword argument of a
-        **Container**, the temporary directory will be mounted
+        this object in the 'volumes' keyword argument of
+        **Container.run**, the temporary directory will be mounted
         at the specified *mount* with the specified *mode*
         permissions.
 

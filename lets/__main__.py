@@ -68,8 +68,12 @@ def main():
             if args.generate:
                 for result in results:
                     output.write(result)
-                    if args.generate and not result.endswith(b"\n"):
-                        output.write(b"\n")
+                    try:
+                        stresult = result.decode()
+                        if args.generate and not stresult.endswith("\n"):
+                            output.write(b"\n")
+                    except UnicodeDecodeError:
+                        pass
                     output.flush()
             else:
                 output.write(results)
