@@ -68,12 +68,8 @@ def main():
             if args.generate:
                 for result in results:
                     output.write(result)
-                    try:
-                        stresult = result.decode()
-                        if args.generate and not stresult.endswith("\n"):
-                            output.write(b"\n")
-                    except UnicodeDecodeError:
-                        pass
+                    if args.generate and mod.delimiter and not result.endswith(mod.delimiter):
+                        output.write(mod.delimiter)
                     output.flush()
             else:
                 output.write(results)
@@ -92,12 +88,14 @@ def main():
     except (AssertionError, TypeError) as e:
         log.error(e)
 
+    # Handle upstream pipe disconnect
+    except BrokenPipeError as e:
+        try:
+            output.close()
+        except BrokenPipeError as e:
+            mod.log.error("No output")
+    
     # Handle unknown  errors
     except Exception as e:
         log.exception(e)
 
-    except BrokenPipeError as e:
-        try:
-            args.output.close()
-        except BrokenPipeError as e:
-            log.exception(e)

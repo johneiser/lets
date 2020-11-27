@@ -1,4 +1,4 @@
-import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io, unittest
+import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io, unittest, queue, time
 
 log = logging.getLogger(__package__)
 client = None
@@ -34,6 +34,8 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
     placed in the file :code:`lets/encode/base64.py` will be
     accessible as :code:`lets encode/base64`.
     """
+    delimiter = b"\n"   # Used to separate generated output
+
     images = []
     """
     Specify required docker images.
@@ -43,6 +45,7 @@ class Module(types.ModuleType, metaclass=ModuleMeta):
         class MyModule(Module):
             images = ["python:2.7"]
     """
+
 
     @property
     def log(self):
@@ -403,6 +406,205 @@ class Mount(tempfile.TemporaryDirectory):
                     f.write(b"data")
         """
         return open(os.path.join(self.name, file), *args, **kwargs)
+
+
+class IterWriter(io.BytesIO):
+    """
+    Provide a virtual file interface to write to which can then be interated from.
+
+    This interface can be useful when a tool expects to write to a file, but you
+    want to yield the data as output.
+
+    .. code-block:: python
+
+        with IterWriter() as f:
+            f.write(b"data")
+
+            for data in f:
+                yield data
+    """
+    def __init__(self, *args, **kwargs):
+        super(IterWriter, self).__init__(*args, **kwargs)
+        self.queue = queue.Queue()
+
+    def write(self, data):
+        """
+        Write the given bytes to the iterator.
+
+        :param bytes data: data to write
+        """
+        self.queue.put(data)
+
+    def writelines(self, lines):
+        """
+        Write a list of lines to the iterator.
+
+        :param list lines: lines to write
+        """
+        for line in lines:
+            self.write(line)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+
+        # Only stop when file is closed and queue is empty
+        if self.closed and self.queue.empty():
+            raise StopIteration()
+        return self.queue.get()
+
+
+class IterReader(io.BytesIO):
+    """
+    Buffer an iterator and provide a virtual file interface to read from.
+
+    This interface can be useful when a tool expects to read from a file,
+    but you want to use your input generator.
+
+    .. code-block:: python
+
+        with IterReader(input) as f:
+            while True:
+            header = f.read(4)
+            message = f.readline()
+    """
+    def __init__(self, iterator, *args, **kwargs):
+        super(IterReader, self).__init__(*args, **kwargs)
+        self.iterator = iterator
+
+    def read(self, count=-1):
+        """
+        Read from iterator up to count.
+
+        :param int count: maximum bytes to read (-1 for all)
+        :return: iterator content
+        :rtype: bytes
+        """
+        # Read entire global buffer
+        data = super(IterReader, self).read()
+        self.seek(0)
+        self.truncate()
+
+        # Add data from iterator
+        while len(data) < count or count < 0:
+            try: data += next(self.iterator)
+            except StopIteration: break
+
+        # Store excess data in global buffer
+        if count > 0 and len(data) > count:
+            self.write(data[count:])
+            self.seek(0)
+            data = data[:count]
+
+        return data
+
+    def readall(self):
+        """
+        Read over entire iterator.
+
+        :return: iterator content
+        :rtype: bytes
+        """
+        return self.read(-1)
+
+    def readline(self):
+        """
+        Return a single iterator.
+
+        :return: iteration
+        :rtype: bytes
+        """
+        # Read entire global buffer
+        data = super(IterReader, self).read()
+        self.seek(0)
+        self.truncate()
+
+        # Add data from iterator
+        try: data += next(self.iterator)
+        except StopIteration: pass
+
+        return data
+
+    def readlines(self, hint=None):
+        """
+        Return a list of each iteration.
+
+        :param int hint: maximum size of list
+        :return: all iterations
+        :rtype: list
+        """
+        if hint is None or hint <= 0:
+            return list(self)
+        n = 0
+        lines = []
+        for line in self:
+            lines.append(line)
+            n += len(line)
+            if n >= hint:
+                break
+        return lines
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        line = self.readline()
+        if not line:
+            raise StopIteration
+        return line
+
+
+class IterSync(io.BytesIO):
+    """
+    Buffer an iterator and re-iterate according to time of arrival.
+
+    For example, a normal iterator will split a file based on newlines.
+
+    .. code-block:: python
+
+        for line in input:
+            self.log.info("Next line: %s", line)
+
+    A synchronized iterator will instead split based on time of arrival.
+
+    .. code-block:: python
+
+        for data in IterSync(input):
+            self.log.info("Received more: %s", data)
+    """
+    def __init__(self, iterator, interval=0.1):
+        self.iterator = iterator
+        self.interval = interval
+
+        # Set non-blocking, if available
+        if hasattr(self.iterator, "fileno"):
+            os.set_blocking(self.iterator.fileno(), 0)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        data = b""
+
+        # Accumulate all available data
+        while True:
+            try:
+                data += next(self.iterator)
+
+            # Handle exhausted iterator
+            except StopIteration as e:
+                if hasattr(self.iterator, "read"):
+                    peek = self.iterator.read()
+                    if peek is None:
+                        if data: break      # Return what we have
+                        else: time.sleep(self.interval) # Wait for more data
+                    elif not peek: break    # Return what we have
+                    else: data += peek      # Return what we have
+                else: raise e               # Stop iteration
+
+        if not data: raise StopIteration()  # Stop iteration
+        return data
 
 
 class TestCase(unittest.TestCase):

@@ -2,6 +2,16 @@
 Changelog
 =========
 
+3.0.6
+^^^^^
+
+November 26, 2020
+
+- Added __module__.Module.delimiter to customize output generation
+- Added __module__.{IterReader, IterWriter, IterSync}
+- Enabled including modules in other packages by 'entry_points'
+
+
 3.0.5
 ^^^^^
 
