@@ -14,6 +14,8 @@ class MyModule(Module):
             help="number of bytes in each chunk", default=1)
 
     def handle(self, input, count):
+        assert input is not None, "Must provide data as input"
+
         for data in input:
             self.log.debug("Flipping %i bytes by %i", len(data), count)
 

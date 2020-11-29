@@ -1,5 +1,5 @@
 import os, sys, argparse, logging, importlib
-from .__module__ import Module
+from .__module__ import Module, iter_module_packages
 
 log = logging.getLogger(__package__)
 log.setLevel(logging.DEBUG)
@@ -26,8 +26,15 @@ def main():
 
     # Import specified module
     try:
+        mod = None
         path = args.module.replace(os.path.sep, os.path.extsep)
-        mod = importlib.import_module(os.path.extsep + path, __package__)
+        for pkg in iter_module_packages():
+            try:
+                mod = importlib.import_module(os.path.extsep + path, pkg)
+            except ImportError:
+                pass
+
+        assert mod is not None, "No module named '%s'" % path
         assert isinstance(mod, Module), "No module named '%s'" % mod.__name__
 
         # Re-process arguments with module

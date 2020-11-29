@@ -1,8 +1,56 @@
-import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io, unittest, queue, time
+import os, sys, argparse, logging, types, docker, tempfile, platform, subprocess, io, unittest, queue, time, pkg_resources
 
 log = logging.getLogger(__package__)
 client = None
 
+
+def iter_module_paths():
+    """
+    Iterate through packages that have registered a modules directory in the
+    following way and return their full path.
+
+    .. code-block:: python
+
+        setup(
+            ...
+            entry_points = {
+                "lets" : [ "modules=[PACKAGE NAME]:[PATH TO MODULES]" ],
+            }
+            ...
+        )
+    """
+    paths = []
+    for entry in pkg_resources.iter_entry_points(__package__, "modules"):
+        for attr in entry.attrs:
+            path = os.path.join(entry.dist.location, entry.module_name, attr)
+            if path not in paths:
+                yield path
+                paths.append(path)
+
+def iter_module_packages():
+    """
+    Iterate through packages that have registered a modules directory in the
+    following way and return their full package name.
+
+    .. code-block:: python
+
+        setup(
+            ...
+            entry_points = {
+                "lets" : [ "modules=[PACKAGE NAME]:[PATH TO MODULES]" ],
+            }
+            ...
+        )
+    """
+    packages = []
+    for entry in pkg_resources.iter_entry_points(__package__, "modules"):
+        for attr in entry.attrs: 
+            package = os.path.join(entry.module_name, attr)
+            package = package.replace(os.path.sep, os.path.extsep)
+            package = package.strip(os.path.extsep)
+            if package not in packages:
+                yield package
+                packages.append(package)
 
 class ModuleMeta(type):
     """
@@ -601,7 +649,9 @@ class IterSync(io.BytesIO):
                         else: time.sleep(self.interval) # Wait for more data
                     elif not peek: break    # Return what we have
                     else: data += peek      # Return what we have
-                else: raise e               # Stop iteration
+                else:
+                    if data: break          # Return what we have
+                    else: raise e           # Stop iteration
 
         if not data: raise StopIteration()  # Stop iteration
         return data

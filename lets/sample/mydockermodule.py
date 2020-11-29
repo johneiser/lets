@@ -14,6 +14,8 @@ class MyDockerModule(Module):
     images = ["local/sample"]
     
     def handle(self, input):
+        assert input is not None, "Must provide data as input"
+
         for data in input:
             self.log.debug("Opening %d bytes in a hex editor", len(data))
 

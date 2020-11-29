@@ -8,6 +8,7 @@ class Base64(Module):
     """
 
     def handle(self, input):
+        assert input is not None, "Must provide data as input"
         for data in input:
             yield base64.b64encode(data)
 

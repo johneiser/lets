@@ -1,5 +1,5 @@
-from lets.__module__ import Module
-import os, pkg_resources
+from lets.__module__ import Module, iter_module_paths
+
 
 class Autocomplete(Module):
     """
@@ -36,28 +36,5 @@ complete -o default -F _lets lets
 
         # Generate list of module directories
         else:
-            found = []
-
-            # Import core and extended modules
-            base,_,_ = self.__file__.partition(
-                    self.__name__.replace(os.path.extsep, os.path.sep))
-            core = os.path.join(base, "lets")
-            yield core.encode()
-            found.append(core)
-
-            # Import auxiliary modules from other packages. To include, add
-            # the following to setup.py:
-            # 
-            #   setup(
-            #       ...
-            #       entry_points = {
-            #           "lets" : [ "modules=[PACKAGE NAME]:[PATH TO MODULES]" ],
-            #       }
-            #   )
-            for entry in pkg_resources.iter_entry_points("lets"):
-                if entry.name == "modules":
-                    for attr in entry.attrs:
-                        path = os.path.join(entry.dist.location, entry.module_name, attr)
-                        if path not in found:
-                            yield path.encode()
-                            found.append(path)
+            for path in iter_module_paths():
+                yield path.encode()

@@ -2,6 +2,16 @@
 Changelog
 =========
 
+3.0.7
+^^^^^
+
+November 29, 2020
+
+- Fixed bug preventing loading of outside modules
+- Fixed bug causing IterSync to miss singular iterators
+- Added input validation to various modules
+
+
 3.0.6
 ^^^^^
 

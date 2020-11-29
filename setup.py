@@ -45,5 +45,8 @@ setup(
         "console_scripts" : [
             "lets=lets.__main__:main",
         ],
+        "lets" : [
+            "modules=lets:.",
+        ],
     }
 )
