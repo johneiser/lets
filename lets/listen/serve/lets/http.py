@@ -84,5 +84,3 @@ class Http(Module):
 
         # Launch server
         app.run(interface, port, ssl_context=context)
-
-        return iter(())

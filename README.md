@@ -40,8 +40,7 @@ $ pip3 install docker-lets
 Install **lets** extensions
 
 ```
-$ git clone https://github.com/johneiser/lets_pentest
-$ pip3 install ./lets_pentest
+$ pip3 install git+https://github.com/johneiser/lets_pentest.git
 ```
 
 Activate **lets** *tab-completion* for bash.

@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.0.8
+^^^^^
+
+December 5, 2020
+
+- Minor adjustments
+
+
 3.0.7
 ^^^^^
 

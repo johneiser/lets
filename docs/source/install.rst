@@ -34,7 +34,7 @@ Extensions can also be installed with pip3.
 
 .. code-block:: bash
 
-    $ pip3 install docker-lets-pentest
+    $ pip3 install git+https://github.com/johneiser/lets_pentest.git
 
 
 Activate *tab-completion* for bash to browse available modules.
