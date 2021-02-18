@@ -1,1 +1,4 @@
+include LICENSE VERSION README.md
 graft lets
+global-exclude *.py[cod]
+prune *__pycache__
